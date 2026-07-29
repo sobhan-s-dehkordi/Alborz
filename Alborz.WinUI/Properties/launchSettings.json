@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Alborz.WinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Alborz.WinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
