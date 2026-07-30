@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Alborz.WinUI/Alborz.db-shm
+/Alborz.WinUI/Alborz.db-wal
