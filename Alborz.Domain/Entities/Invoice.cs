@@ -3,20 +3,33 @@ using Alborz.Domain.Enums;
 
 namespace Alborz.Domain.Entities;
 
-public class Invoice(int? customerId, PaymentMethod paymentMethod) : BaseEntity
+public class Invoice : BaseEntity
 {
-    public int? CustomerId { get; private set; } = customerId;
-    public Customer? Customer { get; private set; }
-    public DateTime InvoiceDate { get; private set; } = DateTime.Now;
+
+    private Invoice() { }
+
+    public Invoice(int? customerId, PaymentMethod paymentMethod)
+    {
+        CustomerId = customerId;
+        PaymentMethod = paymentMethod;
+        InvoiceDate = DateTime.Now;
+        TotalAmount = 0;
+        DiscountAmount = 0;
+    }
+
+
+    public int? CustomerId { get; private set; }
+    public Customer Customer { get; private set; }
+    public DateTime InvoiceDate { get; private set; }
 
     private readonly List<InvoiceItem> _items = new();
     public IReadOnlyCollection<InvoiceItem> Items => _items.AsReadOnly();
 
-    public decimal TotalAmount { get; private set; } = 0;
-    public decimal DiscountAmount { get; private set; } = 0;
+    public decimal TotalAmount { get; private set; }
+    public decimal DiscountAmount { get; private set; }
     public decimal FinalAmount => TotalAmount - DiscountAmount;
 
-    public PaymentMethod PaymentMethod { get; private set; } = paymentMethod;
+    public PaymentMethod PaymentMethod { get; private set; }
 
     public void AddItem(Product product, int quantity)
     {

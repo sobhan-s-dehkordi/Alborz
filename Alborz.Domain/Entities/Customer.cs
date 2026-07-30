@@ -2,13 +2,24 @@
 
 namespace Alborz.Domain.Entities;
 
-public class Customer(string name, string phoneNumber, string nationalCode) : BaseEntity
+public class Customer : BaseEntity
 {
-    public string Name { get; private set; } = name;
-    public string PhoneNumber { get; private set; } = phoneNumber;
-    public string NationalCode { get; private set; } = nationalCode;
-    public decimal Balance { get; private set; } = 0;
-    public int LoyaltyPoints { get; private set; } = 0;
+    public string Name { get; private set; }
+    public string PhoneNumber { get; private set; }
+    public string NationalCode { get; private set; }
+    public decimal Balance { get; private set; }
+    public int LoyaltyPoints { get; private set; }
+
+    private Customer() { }
+
+    public Customer(string name, string phoneNumber, string nationalCode)
+    {
+        Name = name;
+        PhoneNumber = phoneNumber;
+        NationalCode = nationalCode;
+        Balance = 0;
+        LoyaltyPoints = 0;
+    }
 
     public void AddLoyaltyPoints(decimal purchaseAmount)
     {

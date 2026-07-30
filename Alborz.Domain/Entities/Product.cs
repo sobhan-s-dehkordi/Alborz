@@ -2,14 +2,26 @@
 
 namespace Alborz.Domain.Entities;
 
-public class Product(string name, string barcode, decimal purchasePrice, decimal sellPrice, int initialStock, int reorderPoint) : BaseEntity
+public class Product : BaseEntity
 {
-    public string Name { get; private set; } = name;
-    public string Barcode { get; private set; } = barcode;
-    public decimal PurchasePrice { get; private set; } = purchasePrice;
-    public decimal SellPrice { get; private set; } = sellPrice;
-    public int StockQuantity { get; private set; } = initialStock;
-    public int ReorderPoint { get; private set; } = reorderPoint;
+    private Product() { }
+
+    public Product(string name, string barcode, decimal purchasePrice, decimal sellPrice, int initialStock, int reorderPoint)
+    {
+        Name = name;
+        Barcode = barcode;
+        PurchasePrice = purchasePrice;
+        SellPrice = sellPrice;
+        StockQuantity = initialStock;
+        ReorderPoint = reorderPoint;
+    }
+
+    public string Name { get; private set; }
+    public string Barcode { get; private set; }
+    public decimal PurchasePrice { get; private set; }
+    public decimal SellPrice { get; private set; }
+    public int StockQuantity { get; private set; }
+    public int ReorderPoint { get; private set; }
 
     public void DecreaseStock(int quantity)
     {

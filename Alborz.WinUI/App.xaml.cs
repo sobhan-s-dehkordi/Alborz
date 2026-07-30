@@ -1,50 +1,55 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
+﻿using Alborz.Application.Contracts;
+using Alborz.Application.Features.Products.Commands;
+using Alborz.Infrastructure.Data;
+using Alborz.Infrastructure.Repositories;
+using Alborz.WinUI.ViewModels.Products;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace Alborz.WinUI;
 
-namespace Alborz.WinUI
+public partial class App : Microsoft.UI.Xaml.Application
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public partial class App : Application
+    private Window? _window;
+    public IServiceProvider Services { get; }
+
+    public App()
     {
-        private Window? _window;
+        InitializeComponent();
+        Services = ConfigureServices();
 
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
-        {
-            InitializeComponent();
-        }
+        var dbContext = Services.GetRequiredService<AppDbContext>();
+        dbContext.Database.EnsureCreated();
+    }
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
-        {
-            _window = new MainWindow();
-            _window.Activate();
-        }
+    private static IServiceProvider ConfigureServices()
+    {
+        var services = new ServiceCollection();
+
+        services.AddLogging();
+
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlite("Data Source=Alborz.db"),
+            ServiceLifetime.Transient);
+
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<IProductRepository, ProductRepository>();
+        services.AddTransient<ICustomerRepository, CustomerRepository>();
+        services.AddTransient<IInvoiceRepository, InvoiceRepository>();
+
+        services.AddMediatR(cfg =>
+            cfg.RegisterServicesFromAssembly(typeof(CreateProductCommand).Assembly));
+
+        services.AddTransient<ProductsViewModel>();
+
+        return services.BuildServiceProvider();
+    }
+
+    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    {
+        _window = new MainWindow();
+        _window.Activate();
     }
 }
