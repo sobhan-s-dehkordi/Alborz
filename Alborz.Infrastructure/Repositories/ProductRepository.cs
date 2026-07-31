@@ -11,22 +11,25 @@ public class ProductRepository : IProductRepository
 
     public ProductRepository(AppDbContext context) => _context = context;
 
-    public async Task<Product> GetByIdAsync(int id) =>
-        await _context.Products.FindAsync(id);
-
-    public async Task<Product> GetByBarcodeAsync(string barcode) =>
-        await _context.Products.FirstOrDefaultAsync(p => p.Barcode == barcode);
-
-    public async Task<IEnumerable<Product>> SearchAsync(string searchTerm)
+    public async Task<IEnumerable<Product>> SearchAsync(int? codeFrom, int? codeTo, string barcode, string name)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-            return await _context.Products.ToListAsync();
+        var query = _context.Products.AsQueryable();
 
-        return await _context.Products
-            .Where(p => p.Name.Contains(searchTerm) || p.Barcode == searchTerm)
-            .ToListAsync();
+        if (codeFrom.HasValue)
+            query = query.Where(p => p.Id >= codeFrom.Value);
+
+        if (codeTo.HasValue)
+            query = query.Where(p => p.Id <= codeTo.Value);
+
+        if (!string.IsNullOrWhiteSpace(barcode))
+            query = query.Where(p => p.Barcode.Contains(barcode));
+
+        if (!string.IsNullOrWhiteSpace(name))
+            query = query.Where(p => p.Name.Contains(name));
+
+        return await query.ToListAsync();
     }
 
-    public async Task AddAsync(Product product) =>
-        await _context.Products.AddAsync(product);
+    public async Task<Product> GetByIdAsync(int id) => await _context.Products.FindAsync(id);
+    public async Task AddAsync(Product product) => await _context.Products.AddAsync(product);
 }

@@ -5,58 +5,61 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="20">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="350"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <Grid Padding="20" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <!-- بخش ثبت کالا -->
-        <Border Grid.Column="0" 
+
+        <Border Grid.Row="0" 
                 BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
-                BorderThickness="1" 
-                CornerRadius="8" 
-                Padding="16" 
-                Margin="0,0,16,0"
+                BorderThickness="1" CornerRadius="8" Padding="16"
                 Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
-            <StackPanel Spacing="12">
-                <TextBlock Text="Register New Product" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,0,0,8"/>
-                <TextBox Header="Product Name" Text="{x:Bind ViewModel.ProductName, Mode=TwoWay}" />
-                <TextBox Header="Barcode" Text="{x:Bind ViewModel.Barcode, Mode=TwoWay}" />
-                <TextBox Header="Purchase Price" Text="{x:Bind ViewModel.PurchasePrice, Mode=TwoWay}" />
-                <TextBox Header="Sell Price" Text="{x:Bind ViewModel.SellPrice, Mode=TwoWay}" />
-                <TextBox Header="Initial Stock" Text="{x:Bind ViewModel.StockQuantity, Mode=TwoWay}" />
-                <TextBox Header="Reorder Point" Text="{x:Bind ViewModel.ReorderPoint, Mode=TwoWay}" />
-
-                <Button Content="Save Product" Command="{x:Bind ViewModel.AddProductCommand}" 
-                        HorizontalAlignment="Stretch" Margin="0,16,0,0"/>
-
-                <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" Foreground="Red" TextWrapping="Wrap"/>
-            </StackPanel>
+            <Grid ColumnSpacing="16" RowSpacing="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Row="0" Grid.Column="0" Header="Code (From)" Text="{x:Bind ViewModel.SearchCodeFrom, Mode=TwoWay}" TextChanging="NumericOnly_TextChanging"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Header="Code (To)" Text="{x:Bind ViewModel.SearchCodeTo, Mode=TwoWay}" TextChanging="NumericOnly_TextChanging"/>
+                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Barcode" Text="{x:Bind ViewModel.SearchBarcode, Mode=TwoWay}" TextChanging="NumericOnly_TextChanging" HorizontalAlignment="Stretch"/>
+                <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Product Name" Text="{x:Bind ViewModel.SearchName, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
+                <Button Grid.Row="2" Grid.Column="2" Content="Search" 
+                        Command="{x:Bind ViewModel.LoadProductsCommand}" 
+                        Style="{ThemeResource AccentButtonStyle}" 
+                        VerticalAlignment="Bottom"/>
+            </Grid>
         </Border>
 
-        <!-- بخش لیست کالاها -->
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,0,16">
-                <TextBox PlaceholderText="Search..." Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay}" Width="300" VerticalAlignment="Center"/>
-                <Button Content="Search" Command="{x:Bind ViewModel.LoadProductsCommand}" VerticalAlignment="Center"/>
-            </StackPanel>
-
-            <controls:DataGrid Grid.Row="1" ItemsSource="{x:Bind ViewModel.Products, Mode=OneWay}" 
-                               AutoGenerateColumns="False" IsReadOnly="True">
+        <Border Grid.Row="1" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
+            <controls:DataGrid x:Name="ProductsDataGrid"
+                               ItemsSource="{x:Bind ViewModel.Products, Mode=OneWay}" 
+                               SelectedItem="{x:Bind ViewModel.SelectedProduct, Mode=TwoWay}"
+                               AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                               GridLinesVisibility="Horizontal" AlternatingRowBackground="{ThemeResource SystemControlBackgroundAltHighBrush}">
                 <controls:DataGrid.Columns>
-                    <controls:DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
-                    <controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                    <controls:DataGridTextColumn Header="Code (ID)" Binding="{Binding Id}" Width="100"/>
+                    <controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250"/>
                     <controls:DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="150"/>
+                    <controls:DataGridTextColumn Header="Purchase Price" Binding="{Binding PurchasePrice}" Width="120"/>
                     <controls:DataGridTextColumn Header="Sell Price" Binding="{Binding SellPrice}" Width="120"/>
                     <controls:DataGridTextColumn Header="Stock" Binding="{Binding StockQuantity}" Width="100"/>
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
-        </Grid>
+        </Border>
+
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
+            <Button Content="Edit Selected" Click="EditProduct_Click" IsEnabled="{x:Bind ViewModel.IsProductSelected, Mode=OneWay}" Width="120"/>
+            <Button Content="Create New" Click="CreateProduct_Click" Style="{ThemeResource AccentButtonStyle}" Width="120"/>
+        </StackPanel>
     </Grid>
 </Page>

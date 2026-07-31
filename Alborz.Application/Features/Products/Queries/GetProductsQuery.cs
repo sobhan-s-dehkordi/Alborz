@@ -2,4 +2,8 @@
 
 namespace Alborz.Application.Features.Products.Queries;
 
-public record GetProductsQuery(string SearchTerm) : IRequest<List<ProductDto>>;
+public record GetProductsQuery(
+        int? CodeFrom,
+        int? CodeTo,
+        string Barcode,
+        string Name) : IRequest<List<ProductDto>>;

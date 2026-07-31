@@ -1,0 +1,62 @@
+<ContentDialog
+    x:Class="Alborz.WinUI.Views.ProductEditorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Product Details"
+    PrimaryButtonText="Save"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    Opened="ContentDialog_Opened">
+
+    <StackPanel Spacing="12" Width="350">
+        <TextBox x:Name="NameTextBox" 
+                 Header="Product Name" 
+                 PlaceholderText="Enter product name"/>
+
+        <TextBox x:Name="BarcodeTextBox" 
+                 Header="Barcode" 
+                 PlaceholderText="Enter barcode"
+                 TextChanging="NumericOnly_TextChanging"/>
+
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="PurchasePriceTextBox" 
+                     Grid.Column="0" 
+                     Header="Purchase Price" 
+                     PlaceholderText="0.00"
+                     TextChanging="DecimalOnly_TextChanging"/>
+
+            <TextBox x:Name="SellPriceTextBox" 
+                     Grid.Column="1" 
+                     Header="Sell Price" 
+                     PlaceholderText="0.00"
+                     TextChanging="DecimalOnly_TextChanging"/>
+        </Grid>
+
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="InitialStockTextBox" 
+                     Grid.Column="0" 
+                     Header="Initial Stock" 
+                     PlaceholderText="0"
+                     TextChanging="NumericOnly_TextChanging"/>
+
+            <TextBox x:Name="ReorderPointTextBox" 
+                     Grid.Column="1" 
+                     Header="Reorder Point" 
+                     PlaceholderText="0"
+                     TextChanging="NumericOnly_TextChanging"/>
+        </Grid>
+
+        <TextBlock x:Name="ErrorTextBlock" 
+                   Foreground="Red" 
+                   TextWrapping="Wrap" 
+                   Visibility="Collapsed"/>
+    </StackPanel>
+</ContentDialog>

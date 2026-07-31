@@ -3,20 +3,33 @@ using MediatR;
 
 namespace Alborz.Application.Features.Products.Queries;
 
-public class GetProductsQueryHandler(IProductRepository productRepository) : IRequestHandler<GetProductsQuery, List<ProductDto>>
+public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, List<ProductDto>>
 {
-    private readonly IProductRepository _productRepository = productRepository;
+    private readonly IProductRepository _repository;
+
+    public GetProductsQueryHandler(IProductRepository repository)
+    {
+        _repository = repository;
+    }
 
     public async Task<List<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        var products = await _productRepository.SearchAsync(request.SearchTerm);
+        var products = await _repository.SearchAsync(
+            request.CodeFrom,
+            request.CodeTo,
+            request.Barcode,
+            request.Name
+        );
 
-        return products.Select(p => new ProductDto(
+        var productDtos = products.Select(p => new ProductDto(
             p.Id,
             p.Name,
             p.Barcode,
+            p.PurchasePrice,
             p.SellPrice,
             p.StockQuantity
         )).ToList();
+
+        return productDtos;
     }
 }

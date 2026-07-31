@@ -42,5 +42,17 @@ public class Product : BaseEntity
         StockQuantity += quantity;
     }
 
+    public void UpdateDetails(string name, string barcode, decimal purchasePrice, decimal sellPrice, int reorderPoint)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Product name cannot be empty.");
+
+        Name = name;
+        Barcode = barcode;
+        PurchasePrice = purchasePrice;
+        SellPrice = sellPrice;
+        ReorderPoint = reorderPoint;
+    }
+
     public bool NeedsReorder() => StockQuantity <= ReorderPoint;
 }

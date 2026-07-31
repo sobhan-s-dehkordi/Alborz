@@ -2,10 +2,10 @@
 using Alborz.Application.Features.Products.Commands;
 using Alborz.Infrastructure.Data;
 using Alborz.Infrastructure.Repositories;
-using Alborz.WinUI.ViewModels.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using ProjectName.WinUI.ViewModels;
 using System;
 
 namespace Alborz.WinUI;
@@ -31,16 +31,15 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddLogging();
 
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlite("Data Source=Alborz.db"),
-            ServiceLifetime.Transient);
+            options.UseSqlite("Data Source=Alborz.db"));
 
-        services.AddTransient<IUnitOfWork, UnitOfWork>();
-        services.AddTransient<IProductRepository, ProductRepository>();
-        services.AddTransient<ICustomerRepository, CustomerRepository>();
-        services.AddTransient<IInvoiceRepository, InvoiceRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<ICustomerRepository, CustomerRepository>();
+        services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
         services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(CreateProductCommand).Assembly));
+            cfg.RegisterServicesFromAssembly(typeof(ProductCommandHandlers).Assembly));
 
         services.AddTransient<ProductsViewModel>();
 
