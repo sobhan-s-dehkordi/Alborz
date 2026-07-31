@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Alborz.WinUI/Alborz.db-shm
 /Alborz.WinUI/Alborz.db-wal
+/Alborz.WinUI/Alborz.db
