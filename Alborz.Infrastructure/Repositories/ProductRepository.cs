@@ -31,5 +31,15 @@ public class ProductRepository : IProductRepository
     }
 
     public async Task<Product> GetByIdAsync(int id) => await _context.Products.FindAsync(id);
+
     public async Task AddAsync(Product product) => await _context.Products.AddAsync(product);
+
+    public async Task<Product?> GetByBarcodeAsync(string barcode)
+    {
+        if (string.IsNullOrWhiteSpace(barcode))
+            return null;
+
+        return await _context.Products
+            .FirstOrDefaultAsync(p => p.Barcode == barcode);
+    }
 }

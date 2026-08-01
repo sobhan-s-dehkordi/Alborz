@@ -16,6 +16,7 @@
   <ItemGroup>
     <None Remove="Views\ProductEditorDialog.xaml" />
     <None Remove="Views\ProductsPage.xaml" />
+    <None Remove="Views\PurchaseReceiptPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +54,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Alborz.Application\Alborz.Application.csproj" />
     <ProjectReference Include="..\Alborz.Infrastructure\Alborz.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\PurchaseReceiptPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\ProductEditorDialog.xaml">

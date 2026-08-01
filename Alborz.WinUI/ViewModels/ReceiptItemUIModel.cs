@@ -1,0 +1,19 @@
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace ProjectName.WinUI.ViewModels;
+
+public partial class ReceiptItemUIModel : ObservableObject
+{
+    public int ProductId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalPrice))]
+    private int _quantity;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalPrice))]
+    private decimal _unitPrice;
+
+    public decimal TotalPrice => Quantity * UnitPrice;
+}

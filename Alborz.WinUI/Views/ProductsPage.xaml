@@ -3,7 +3,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:converters="using:Alborz.WinUI.Converters"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+    <Page.Resources>
+        <converters:CurrencyFormatConverter x:Key="CurrencyConverter" />
+    </Page.Resources>
+
 
     <Grid Padding="20" RowSpacing="16">
         <Grid.RowDefinitions>
@@ -49,8 +56,8 @@
                     <controls:DataGridTextColumn Header="Code (ID)" Binding="{Binding Id}" Width="100"/>
                     <controls:DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="250"/>
                     <controls:DataGridTextColumn Header="Barcode" Binding="{Binding Barcode}" Width="150"/>
-                    <controls:DataGridTextColumn Header="Purchase Price" Binding="{Binding PurchasePrice}" Width="120"/>
-                    <controls:DataGridTextColumn Header="Sell Price" Binding="{Binding SellPrice}" Width="120"/>
+                    <controls:DataGridTextColumn Header="Purchase Price" Binding="{Binding PurchasePrice, Converter={StaticResource CurrencyConverter}}" Width="120"/>
+                    <controls:DataGridTextColumn Header="Sell Price" Binding="{Binding SellPrice, Converter={StaticResource CurrencyConverter}}" Width="120"/>
                     <controls:DataGridTextColumn Header="Stock" Binding="{Binding StockQuantity}" Width="100"/>
                 </controls:DataGrid.Columns>
             </controls:DataGrid>

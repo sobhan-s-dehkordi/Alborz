@@ -26,14 +26,14 @@
             <TextBox x:Name="PurchasePriceTextBox" 
                      Grid.Column="0" 
                      Header="Purchase Price" 
-                     PlaceholderText="0.00"
-                     TextChanging="DecimalOnly_TextChanging"/>
+                     PlaceholderText="0"
+                     TextChanging="Currency_TextChanging"/>
 
             <TextBox x:Name="SellPriceTextBox" 
                      Grid.Column="1" 
                      Header="Sell Price" 
-                     PlaceholderText="0.00"
-                     TextChanging="DecimalOnly_TextChanging"/>
+                     PlaceholderText="0"
+                     TextChanging="Currency_TextChanging"/>
         </Grid>
 
         <Grid ColumnSpacing="12">

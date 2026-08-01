@@ -17,8 +17,7 @@
                         <FontIcon Glyph="&#xEC5A;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Products" Tag="ProductsPage">
-                        </NavigationViewItem>
+                        <NavigationViewItem Content="Products" Tag="ProductsPage"/>
                         <NavigationViewItem Content="Purchase Receipt" Tag="PurchaseReceiptPage"/>
                         <NavigationViewItem Content="Purchase Archive" Tag="PurchaseArchivePage"/>
                     </NavigationViewItem.MenuItems>

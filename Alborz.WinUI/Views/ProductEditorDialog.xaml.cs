@@ -1,5 +1,6 @@
 using Alborz.Application.Features.Products.Queries;
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 
@@ -50,6 +51,37 @@ public sealed partial class ProductEditorDialog : ContentDialog
         }
     }
 
+    private void Currency_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+    {
+        string rawText = sender.Text.Replace(",", "");
+
+        if (string.IsNullOrWhiteSpace(rawText))
+        {
+            sender.Text = string.Empty;
+            return;
+        }
+
+        if (rawText.Any(c => !char.IsDigit(c)))
+        {
+            rawText = new string(rawText.Where(char.IsDigit).ToArray());
+        }
+
+        if (decimal.TryParse(rawText, out decimal value))
+        {
+            string formattedText = value.ToString("N0");
+
+            if (sender.Text != formattedText)
+            {
+                int cursorPositionFromEnd = sender.Text.Length - sender.SelectionStart;
+
+                sender.Text = formattedText;
+
+                int newCursorPosition = formattedText.Length - cursorPositionFromEnd;
+                sender.SelectionStart = Math.Max(0, newCursorPosition);
+            }
+        }
+    }
+
     private void DecimalOnly_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
     {
         string text = sender.Text;
@@ -63,8 +95,8 @@ public sealed partial class ProductEditorDialog : ContentDialog
 
     public string ProductName => NameTextBox.Text;
     public string Barcode => BarcodeTextBox.Text;
-    public decimal PurchasePrice => decimal.TryParse(PurchasePriceTextBox.Text, out var p) ? p : 0;
-    public decimal SellPrice => decimal.TryParse(SellPriceTextBox.Text, out var s) ? s : 0;
+    public decimal PurchasePrice => decimal.TryParse(PurchasePriceTextBox.Text.Replace(",", ""), out var p) ? p : 0;
+    public decimal SellPrice => decimal.TryParse(SellPriceTextBox.Text.Replace(",", ""), out var s) ? s : 0;
     public int InitialStock => int.TryParse(InitialStockTextBox.Text, out var i) ? i : 0;
     public int ReorderPoint => int.TryParse(ReorderPointTextBox.Text, out var r) ? r : 0;
 }
