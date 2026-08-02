@@ -22,20 +22,20 @@ public class CreatePurchaseReceiptCommandHandler : IRequestHandler<CreatePurchas
 
     public async Task<int> Handle(CreatePurchaseReceiptCommand request, CancellationToken cancellationToken)
     {
-        if (!request.Items.Any()) throw new ArgumentException("Receipt must contain at least one item.");
-
-        var receipt = new PurchaseReceipt(request.SupplierName);
+        var receipt = new PurchaseReceipt(
+            request.PartyId,
+            request.ReceiptDate,
+            request.ReferenceNumber,
+            request.TotalDiscount,
+            request.AdditionalCharges,
+            request.Remarks);
 
         foreach (var itemDto in request.Items)
         {
             var product = await _productRepository.GetByIdAsync(itemDto.ProductId);
-            if (product == null) throw new KeyNotFoundException($"Product ID {itemDto.ProductId} not found.");
-
-            // Domain Logic: Increase the stock!
             product.IncreaseStock(itemDto.Quantity);
 
-            // Add to receipt
-            receipt.AddItem(product, itemDto.Quantity, itemDto.UnitPrice);
+            receipt.AddItem(product, itemDto.Quantity, itemDto.UnitPrice, itemDto.DiscountAmount);
         }
 
         await _receiptRepository.AddAsync(receipt);

@@ -6,11 +6,12 @@ public class PurchaseReceiptItem : BaseEntity
 {
     private PurchaseReceiptItem() { }
 
-    internal PurchaseReceiptItem(int productId, int quantity, decimal unitPrice)
+    internal PurchaseReceiptItem(int productId, int quantity, decimal unitPrice, decimal discountAmount)
     {
         ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
+        DiscountAmount = discountAmount;
     }
 
     public int PurchaseReceiptId { get; private set; }
@@ -18,7 +19,9 @@ public class PurchaseReceiptItem : BaseEntity
     public int Quantity { get; private set; }
     public decimal UnitPrice { get; private set; }
 
-    public decimal TotalPrice => Quantity * UnitPrice;
+    public decimal DiscountAmount { get; private set; }
+
+    public decimal TotalPrice => (Quantity * UnitPrice) - DiscountAmount;
 
     public Product Product { get; private set; }
 }

@@ -37,6 +37,7 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+        services.AddScoped<IPartyRepository, PartyRepository>();
         services.AddScoped<IPurchaseReceiptRepository, PurchaseReceiptRepository>();
         services.AddTransient<PurchaseReceiptViewModel>();
 

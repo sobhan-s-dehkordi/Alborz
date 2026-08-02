@@ -1,4 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Alborz.Application.Features.Products.Queries;
+using Alborz.Application.Features.PurchaseReceipts.Commands;
+using Alborz.Application.Features.PurchaseReceipts.Queries;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectName.WinUI.ViewModels;
 
@@ -15,5 +24,9 @@ public partial class ReceiptItemUIModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
     private decimal _unitPrice;
 
-    public decimal TotalPrice => Quantity * UnitPrice;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalPrice))]
+    private decimal _discountAmount;
+
+    public decimal TotalPrice => (Quantity * UnitPrice) - DiscountAmount;
 }
