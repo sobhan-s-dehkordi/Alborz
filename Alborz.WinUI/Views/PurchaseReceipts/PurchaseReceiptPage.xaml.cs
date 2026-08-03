@@ -16,17 +16,32 @@ namespace Alborz.WinUI.Views
             ViewModel = ((App)Microsoft.UI.Xaml.Application.Current).Services.GetRequiredService<PurchaseReceiptViewModel>();
         }
 
-        
+
         private void ProductSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
+                if (string.IsNullOrWhiteSpace(sender.Text))
+                {
+                    ViewModel.SelectProduct(null);
+                    ViewModel.ProductSearchResults.Clear();
+                    return;
+                }
+
                 ViewModel.SearchProductsCommand.Execute(sender.Text);
             }
         }
 
-       
+        // REQUIREMENT 1: Remove item click handler
+        private void RemoveItemButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.DataContext is ReceiptItemUIModel item)
+            {
+                ViewModel.RemoveItemCommand.Execute(item);
+            }
+        }
+
+
         private void ProductSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             if (args.SelectedItem is ProductDto selectedProduct)

@@ -71,7 +71,14 @@
 
                 <TextBox Grid.Column="2" Header="Unit Price" Text="{x:Bind ViewModel.InputPrice, Mode=TwoWay}" TextChanging="Currency_TextChanging"/>
 
-                <TextBox Grid.Column="3" Header="Item Discount" Text="{x:Bind ViewModel.InputItemDiscount, Mode=TwoWay}" TextChanging="Currency_TextChanging"/>
+                <NumberBox Grid.Column="3" 
+                   Header="Discount (%)" 
+                   Value="{x:Bind ViewModel.InputDiscountPercentage, Mode=TwoWay}" 
+                   SmallChange="5" 
+                   LargeChange="5" 
+                   Minimum="0" 
+                   Maximum="100" 
+                   SpinButtonPlacementMode="Inline"/>
 
                 <Button Grid.Column="4" Content="Add to List" Command="{x:Bind ViewModel.AddToReceiptCommand}" VerticalAlignment="Bottom" Style="{ThemeResource AccentButtonStyle}" Width="150"/>
                 
@@ -86,6 +93,21 @@
                     <controls:DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice, Converter={StaticResource CurrencyConverter}}" Width="120" MinWidth="120"/>
                     <controls:DataGridTextColumn Header="Discount" Binding="{Binding DiscountAmount, Converter={StaticResource CurrencyConverter}}" Width="120" MinWidth="120"/>
                     <controls:DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice, Converter={StaticResource CurrencyConverter}}" Width="140" MinWidth="140"/>
+
+                    <controls:DataGridTemplateColumn Width="70">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Background="Transparent" 
+                            BorderThickness="0" 
+                            Foreground="IndianRed"
+                            Click="RemoveItemButton_Click"
+                            ToolTipService.ToolTip="Remove item">
+                                    <FontIcon Glyph="&#xE74D;" FontSize="16"/>
+                                </Button>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
         </Border>

@@ -53,6 +53,22 @@ public partial class PurchaseReceiptViewModel : ObservableObject
 
     public decimal TotalLineDiscounts => ReceiptItems.Sum(x => x.DiscountAmount);
 
+    [ObservableProperty]
+    private double _inputDiscountPercentage = 0;
+
+    [RelayCommand]
+    public void RemoveItem(ReceiptItemUIModel item)
+    {
+        if (item != null && ReceiptItems.Contains(item))
+        {
+            ReceiptItems.Remove(item);
+
+            OnPropertyChanged(nameof(TotalAmount));
+            OnPropertyChanged(nameof(TotalLineDiscounts));
+            OnPropertyChanged(nameof(NetAmount));
+        }
+    }
+
     public decimal OverallTotalDiscount
     {
         get
@@ -126,36 +142,80 @@ public partial class PurchaseReceiptViewModel : ObservableObject
     public void SelectProduct(ProductDto product)
     {
         _selectedProductFromSearch = product;
-        SearchProductText = product.Name;
-        InputPrice = product.PurchasePrice.ToString("N0");
-        InputQuantity = 1;
-        InputItemDiscount = "0";
+        if (product is not null)
+        {
+            SearchProductText = product.Name;
+            InputPrice = product.PurchasePrice.ToString("N0");
+            InputQuantity = 1;
+            InputItemDiscount = "0";
+        }        
     }
+
+    //[RelayCommand]
+    //public void AddToReceipt()
+    //{
+    //    if (_selectedProductFromSearch == null) return;
+
+    //    decimal price = decimal.TryParse(InputPrice.Replace(",", ""), out var p) ? p : 0;
+    //    decimal discount = decimal.TryParse(InputItemDiscount.Replace(",", ""), out var d) ? d : 0;
+
+    //    ReceiptItems.Add(new ReceiptItemUIModel
+    //    {
+    //        ProductId = _selectedProductFromSearch.Id,
+    //        ProductName = _selectedProductFromSearch.Name,
+    //        Quantity = InputQuantity,
+    //        UnitPrice = price,
+    //        DiscountAmount = discount
+    //    });
+
+    //    SearchProductText = string.Empty;
+    //    _selectedProductFromSearch = null;
+    //    InputQuantity = 1;
+    //    InputPrice = "0";
+    //    InputItemDiscount = "0";
+
+    //    OnPropertyChanged(nameof(TotalAmount));
+    //    OnPropertyChanged(nameof(NetAmount));
+    //}
 
     [RelayCommand]
     public void AddToReceipt()
     {
+        // REQUIREMENT 2: Block adding if no product is actually selected
         if (_selectedProductFromSearch == null) return;
 
-        decimal price = decimal.TryParse(InputPrice.Replace(",", ""), out var p) ? p : 0;
-        decimal discount = decimal.TryParse(InputItemDiscount.Replace(",", ""), out var d) ? d : 0;
+        if (InputQuantity <= 0) return;
+        if (!decimal.TryParse(InputPrice.Replace(",", ""), out decimal price)) return;
 
-        ReceiptItems.Add(new ReceiptItemUIModel
+        // REQUIREMENT 3: Calculate the actual discount amount mathematically
+        // Formula: (Price * Quantity) * (Percentage / 100) 
+        // OR just Unit Price * (Percentage / 100) depending on your UI Model.
+        // Assuming you calculate total discount for that specific line item:
+
+        decimal totalLinePrice = price * InputQuantity;
+        decimal calculatedDiscountAmount = totalLinePrice * (decimal)(InputDiscountPercentage / 100.0);
+
+        var newItem = new ReceiptItemUIModel
         {
             ProductId = _selectedProductFromSearch.Id,
             ProductName = _selectedProductFromSearch.Name,
             Quantity = InputQuantity,
             UnitPrice = price,
-            DiscountAmount = discount
-        });
+            DiscountAmount = calculatedDiscountAmount
+        };
 
-        SearchProductText = string.Empty;
+        ReceiptItems.Add(newItem);
+
+        // Reset inputs for the next item
         _selectedProductFromSearch = null;
+        SearchProductText = string.Empty;
         InputQuantity = 1;
         InputPrice = "0";
-        InputItemDiscount = "0";
+        InputDiscountPercentage = 0; // Reset percentage to 0
 
+        // Update Summaries
         OnPropertyChanged(nameof(TotalAmount));
+        OnPropertyChanged(nameof(TotalLineDiscounts));
         OnPropertyChanged(nameof(NetAmount));
     }
 
