@@ -42,4 +42,18 @@ public class ProductRepository : IProductRepository
         return await _context.Products
             .FirstOrDefaultAsync(p => p.Barcode == barcode);
     }
+    public async Task<IEnumerable<Product>> SearchFastAsync(string searchTerm)
+    {
+        var term = searchTerm.Trim();
+        bool isNumeric = int.TryParse(term, out int code);
+
+        return await _context.Products
+            .Where(p =>
+                (isNumeric && p.Id == code) ||
+                p.Barcode == term ||
+                p.Name.Contains(term) 
+            )
+            .Take(10)
+            .ToListAsync();
+    }
 }

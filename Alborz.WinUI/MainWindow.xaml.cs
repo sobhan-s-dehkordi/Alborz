@@ -25,7 +25,8 @@ public sealed partial class MainWindow : Window
         Type pageType = pageTag switch
         {
             "ProductsPage" => typeof(Views.ProductsPage),
-            "PurchaseReceiptPage" => typeof(Views.PurchaseReceiptPage)
+            "PurchaseReceiptPage" => typeof(Views.PurchaseReceiptPage),
+            "PartiesPage" => typeof(Views.PartiesPage)
         };
 
         OpenOrFocusTab(header, pageType, item.Icon);

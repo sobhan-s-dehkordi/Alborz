@@ -9,7 +9,17 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-        optionsBuilder.UseSqlite("Data Source=Alborz.db");
+        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        string appFolder = Path.Combine(localAppData, "AlborzApp");
+
+        if (!Directory.Exists(appFolder))
+        {
+            Directory.CreateDirectory(appFolder);
+        }
+
+        string dbPath = Path.Combine(appFolder, "Alborz.db");
+
+        optionsBuilder.UseSqlite($"Data Source={dbPath}");
 
         return new AppDbContext(optionsBuilder.Options);
     }

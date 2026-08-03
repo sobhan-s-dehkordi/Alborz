@@ -18,4 +18,12 @@ public class Party : BaseEntity
     public string Phone { get; private set; }
     public bool IsSupplier { get; private set; }
     public bool IsCustomer { get; private set; }
+
+    public void Update(string name, string phone, bool isSupplier, bool isCustomer)
+    {
+        Name = name;
+        Phone = phone;
+        IsSupplier = isSupplier;
+        IsCustomer = isCustomer;
+    }
 }

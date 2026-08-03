@@ -11,7 +11,17 @@
                         IsSettingsVisible="False"
                         ItemInvoked="MainNav_ItemInvoked">
 
+
             <NavigationView.MenuItems>
+                <NavigationViewItem Content="Basic Information" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8EC;"/>
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Parties" Tag="PartiesPage"/>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+
                 <NavigationViewItem Content="Inventory &amp; Supply" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC5A;"/>

@@ -1,4 +1,5 @@
-﻿using Alborz.Application.Features.Products.Queries;
+﻿using Alborz.Application.Features.Parties.Queries;
+using Alborz.Application.Features.Products.Queries;
 using Alborz.Application.Features.PurchaseReceipts.Commands;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -17,9 +18,11 @@ public partial class PurchaseReceiptViewModel : ObservableObject
 
     public ObservableCollection<ReceiptItemUIModel> ReceiptItems { get; } = new();
     public ObservableCollection<PartyDto> Suppliers { get; } = new();
+
+    [ObservableProperty]
+    private PartyDto? _selectedSupplier;
     public ObservableCollection<ProductDto> ProductSearchResults { get; } = new();
 
-    // 1. Add these new properties
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(NetAmount))]
     [NotifyPropertyChangedFor(nameof(AdditionalChargesValue))]
@@ -28,11 +31,9 @@ public partial class PurchaseReceiptViewModel : ObservableObject
     [ObservableProperty]
     private string _remarks = string.Empty;
 
-    // 2. Add a helper to convert the formatted string back to decimal for the UI summary
     public decimal AdditionalChargesValue => decimal.TryParse(AdditionalCharges.Replace(",", ""), out var ac) ? ac : 0;
 
 
-    [ObservableProperty] private PartyDto? _selectedSupplier;
     [ObservableProperty] private DateTimeOffset _receiptDate = DateTimeOffset.Now;
     [ObservableProperty] private string _referenceNumber = string.Empty;
 
@@ -87,25 +88,39 @@ public partial class PurchaseReceiptViewModel : ObservableObject
 
     private async Task LoadSuppliersAsync()
     {
-        // var query = new GetSuppliersQuery(); ...
+        using var scope = _scopeFactory.CreateScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var suppliers = await mediator.Send(new GetSuppliersQuery());
+
+        Suppliers.Clear();
+
+        foreach (var supplier in suppliers)
+        {
+            Suppliers.Add(supplier);
+        }
     }
 
 
     [RelayCommand]
     public async Task SearchProductsAsync(string searchText)
     {
-        if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2) return;
+        if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
+        {
+            ProductSearchResults.Clear();
+            return;
+        }
 
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        int? code = int.TryParse(searchText, out int c) ? c : null;
-        var query = new GetProductsQuery(code, code, searchText, searchText);
-
-        var results = await mediator.Send(query);
+        var results = await mediator.Send(new SearchProductSuggestQuery(searchText));
 
         ProductSearchResults.Clear();
-        foreach (var item in results) ProductSearchResults.Add(item);
+        foreach (var item in results)
+        {
+            ProductSearchResults.Add(item);
+        }
     }
 
     public void SelectProduct(ProductDto product)

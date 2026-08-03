@@ -8,4 +8,5 @@ public interface IProductRepository
     Task<Product> GetByIdAsync(int id);
     Task AddAsync(Product product);
     Task<Product?> GetByBarcodeAsync(string barcode);
+    Task<IEnumerable<Product>> SearchFastAsync(string searchTerm);
 }

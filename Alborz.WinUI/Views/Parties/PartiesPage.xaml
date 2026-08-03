@@ -1,0 +1,51 @@
+<Page
+    x:Class="Alborz.WinUI.Views.PartiesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="20" RowSpacing="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <TextBox Header="Search Name" Text="{x:Bind ViewModel.SearchName, Mode=TwoWay}" Width="200" KeyDown="SearchBox_KeyDown"/>
+                <TextBox Header="Search Phone" Text="{x:Bind ViewModel.SearchPhone, Mode=TwoWay}" Width="200" KeyDown="SearchBox_KeyDown"/>
+                <Button Content="Search" Command="{x:Bind ViewModel.LoadPartiesCommand}" VerticalAlignment="Bottom" Style="{ThemeResource AccentButtonStyle}"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8">
+            <controls:DataGrid ItemsSource="{x:Bind ViewModel.Parties, Mode=OneWay}" 
+                               SelectedItem="{x:Bind ViewModel.SelectedParty, Mode=TwoWay}"
+                               AutoGenerateColumns="False" 
+                               IsReadOnly="True" 
+                               GridLinesVisibility="Horizontal">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
+                    <controls:DataGridTextColumn Header="Full Name" Binding="{Binding Name}" Width="250"/>
+                    <controls:DataGridTextColumn Header="Phone Number" Binding="{Binding Phone}" Width="200"/>
+                    <controls:DataGridTextColumn Header="Assigned Role" Binding="{Binding Role}" Width="*"/>
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
+            <Button Content="Edit Selected" 
+            Click="EditButton_Click" 
+            IsEnabled="{x:Bind HasSelectedParty(ViewModel.SelectedParty), Mode=OneWay}" 
+            Width="120"/>
+
+            <Button Content="Create New" 
+            Click="AddButton_Click" 
+            Style="{ThemeResource AccentButtonStyle}" 
+            Width="120"/>
+        </StackPanel>
+
+    </Grid>
+</Page>

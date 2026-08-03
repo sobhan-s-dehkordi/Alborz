@@ -54,6 +54,8 @@
                                 ItemsSource="{x:Bind ViewModel.ProductSearchResults, Mode=OneWay}"
                                 TextChanged="ProductSearchBox_TextChanged"
                                 SuggestionChosen="ProductSearchBox_SuggestionChosen"
+                                TextMemberPath="Name"
+                                UpdateTextOnSelect="False"
                                 PlaceholderText="Type to search...">
                     <AutoSuggestBox.ItemTemplate>
                         <DataTemplate>

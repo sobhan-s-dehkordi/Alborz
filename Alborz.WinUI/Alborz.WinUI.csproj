@@ -14,6 +14,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\PartiesPage.xaml" />
+    <None Remove="Views\PartyEditorDialog.xaml" />
     <None Remove="Views\ProductEditorDialog.xaml" />
     <None Remove="Views\ProductsPage.xaml" />
     <None Remove="Views\PurchaseReceiptPage.xaml" />
@@ -56,6 +58,16 @@
     <ProjectReference Include="..\Alborz.Infrastructure\Alborz.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Views\PartyEditorDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\PartiesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Views\PurchaseReceiptPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -69,6 +81,11 @@
     <Page Update="Pages\ProductsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\PurchaseReceipts\" />
+    <Folder Include="Views\Products\" />
+    <Folder Include="Views\Parties\" />
   </ItemGroup>
 
   <!--

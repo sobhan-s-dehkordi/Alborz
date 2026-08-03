@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using ProjectName.WinUI.ViewModels;
 using System;
+using System.IO;
 
 namespace Alborz.WinUI;
 
@@ -30,8 +31,19 @@ public partial class App : Microsoft.UI.Xaml.Application
 
         services.AddLogging();
 
+        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        string appFolder = Path.Combine(localAppData, "AlborzApp");
+
+        if (!Directory.Exists(appFolder))
+        {
+            Directory.CreateDirectory(appFolder);
+        }
+
+        string dbPath = Path.Combine(appFolder, "Alborz.db");
+
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlite("Data Source=Alborz.db"));
+            options.UseSqlite($"Data Source={dbPath}"));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IProductRepository, ProductRepository>();
@@ -39,12 +51,13 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
         services.AddScoped<IPartyRepository, PartyRepository>();
         services.AddScoped<IPurchaseReceiptRepository, PurchaseReceiptRepository>();
-        services.AddTransient<PurchaseReceiptViewModel>();
 
         services.AddMediatR(cfg =>
             cfg.RegisterServicesFromAssembly(typeof(ProductCommandHandlers).Assembly));
 
+        services.AddTransient<PurchaseReceiptViewModel>();
         services.AddTransient<ProductsViewModel>();
+        services.AddTransient<PartiesViewModel>();
 
         return services.BuildServiceProvider();
     }

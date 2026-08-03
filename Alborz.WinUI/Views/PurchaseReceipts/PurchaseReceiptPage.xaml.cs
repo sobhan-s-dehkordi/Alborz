@@ -1,4 +1,4 @@
-using Alborz.Application.Features.Products.Queries; // Required for ProductDto
+using Alborz.Application.Features.Products.Queries;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using ProjectName.WinUI.ViewModels;
@@ -19,7 +19,7 @@ namespace Alborz.WinUI.Views
         
         private void ProductSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            
+
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 ViewModel.SearchProductsCommand.Execute(sender.Text);
