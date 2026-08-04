@@ -1,36 +1,23 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
-
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 
 namespace Alborz.WinUI;
 
 public sealed partial class MainWindow : Window
 {
+
+    #region <Constructor>
+
     public MainWindow()
     {
         InitializeComponent();
     }
-    private void MainNav_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-    {
-        var item = args.InvokedItemContainer as NavigationViewItem;
 
-        if (item == null || item.MenuItems.Count > 0 || item.Tag == null)
-            return;
+    #endregion
 
-        string pageTag = item.Tag.ToString();
-        string header = item.Content.ToString();
-
-        Type pageType = pageTag switch
-        {
-            "ProductsPage" => typeof(Views.Products.ProductsPage),
-            "PurchaseReceiptPage" => typeof(Views.PurchaseReceipts.PurchaseReceiptPage),
-            "PartiesPage" => typeof(Views.Parties.PartiesPage)
-        };
-
-        OpenOrFocusTab(header, pageType, item.Icon);
-    }
+    #region <Methods>
 
     private void OpenOrFocusTab(string header, Type pageType, IconElement menuIcon)
     {
@@ -62,8 +49,36 @@ public sealed partial class MainWindow : Window
         MainTabView.SelectedItem = newTab;
     }
 
+    #endregion
+
+    #region <Event Handlers>
+
+    private void MainNav_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        var item = args.InvokedItemContainer as NavigationViewItem;
+
+        if (item == null || item.MenuItems.Count > 0 || item.Tag == null)
+        {
+            return;
+        }
+
+        string pageTag = item.Tag.ToString();
+        string header = item.Content.ToString();
+
+        Type pageType = pageTag switch
+        {
+            "ProductsPage" => typeof(Views.Products.ProductsPage),
+            "PurchaseReceiptPage" => typeof(Views.PurchaseReceipts.PurchaseReceiptPage),
+            "PartiesPage" => typeof(Views.Parties.PartiesPage)
+        };
+
+        OpenOrFocusTab(header, pageType, item.Icon);
+    }
+
     private void MainTabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
     {
         sender.TabItems.Remove(args.Tab);
     }
+
+    #endregion
 }

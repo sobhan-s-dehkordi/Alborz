@@ -1,20 +1,19 @@
-﻿using Alborz.Application.Features.Products.Queries;
-using Alborz.Application.Features.PurchaseReceipts.Commands;
-using Alborz.Application.Features.PurchaseReceipts.Queries;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ProjectName.WinUI.ViewModels;
 
 public partial class ReceiptItemUIModel : ObservableObject
 {
+
+    #region <Properties>
+
     public int ProductId { get; set; }
+
     public string ProductName { get; set; } = string.Empty;
+
+    #endregion
+
+    #region <Observable & Computed Properties>
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
@@ -29,4 +28,7 @@ public partial class ReceiptItemUIModel : ObservableObject
     private decimal _discountAmount;
 
     public decimal TotalPrice => (Quantity * UnitPrice) - DiscountAmount;
+
+    #endregion
+
 }

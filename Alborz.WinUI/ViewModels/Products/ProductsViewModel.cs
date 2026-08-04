@@ -1,34 +1,62 @@
-﻿using Alborz.Application.Features.Products.Commands;
-using Alborz.Application.Features.Products.Queries;
+﻿using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using Alborz.Application.Features.Products.Commands;
+using Alborz.Application.Features.Products.Queries;
 
 namespace ProjectName.WinUI.ViewModels;
 
 public partial class ProductsViewModel : ObservableObject
 {
+
+    #region <Fields>
+
     private readonly IServiceScopeFactory _scopeFactory;
+
+    #endregion
+
+    #region <Collections>
+
     public ObservableCollection<ProductDto> Products { get; } = new();
 
-    [ObservableProperty] private string _searchCodeFrom = string.Empty;
-    [ObservableProperty] private string _searchCodeTo = string.Empty;
-    [ObservableProperty] private string _searchBarcode = string.Empty;
-    [ObservableProperty] private string _searchName = string.Empty;
+    #endregion
+
+    #region <Observable Properties>
+
+    [ObservableProperty]
+    private string _searchCodeFrom = string.Empty;
+
+    [ObservableProperty]
+    private string _searchCodeTo = string.Empty;
+
+    [ObservableProperty]
+    private string _searchBarcode = string.Empty;
+
+    [ObservableProperty]
+    private string _searchName = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsProductSelected))]
     private ProductDto? _selectedProduct;
+
     public bool IsProductSelected => SelectedProduct != null;
+
+    #endregion
+
+    #region <Constructor>
 
     public ProductsViewModel(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
         _ = LoadProductsAsync();
     }
+
+    #endregion
+
+    #region <Commands & Methods>
 
     [RelayCommand]
     public async Task LoadProductsAsync()
@@ -46,8 +74,13 @@ public partial class ProductsViewModel : ObservableObject
             Products.Clear();
 
             if (result is not null)
-                foreach (var item in result) Products.Add(item);
-            
+            {
+                foreach (var item in result)
+                {
+                    Products.Add(item);
+                }
+            }
+
             SelectedProduct = null;
         }
     }
@@ -77,4 +110,6 @@ public partial class ProductsViewModel : ObservableObject
 
         await LoadProductsAsync();
     }
+
+    #endregion
 }

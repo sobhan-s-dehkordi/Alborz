@@ -1,21 +1,48 @@
+using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using ProjectName.WinUI.ViewModels;
-using System;
-using System.Linq;
 
 namespace Alborz.WinUI.Views.Products;
 
-
 public sealed partial class ProductsPage : Page
 {
+
+    #region <Properties>
+
     public ProductsViewModel ViewModel { get; }
+
+    #endregion
+
+    #region <Constructor>
+
     public ProductsPage()
     {
         InitializeComponent();
         ViewModel = ((App)Microsoft.UI.Xaml.Application.Current).Services.GetRequiredService<ProductsViewModel>();
     }
+
+    #endregion
+
+    #region <Methods>
+
+    private async System.Threading.Tasks.Task ShowErrorDialogAsync(string errorMessage)
+    {
+        var errorDialog = new ContentDialog
+        {
+            Title = "Error",
+            Content = errorMessage,
+            CloseButtonText = "OK",
+            XamlRoot = this.XamlRoot
+        };
+        await errorDialog.ShowAsync();
+    }
+
+    #endregion
+
+    #region <Event Handlers>
 
     private async void CreateProduct_Click(object sender, RoutedEventArgs e)
     {
@@ -74,18 +101,6 @@ public sealed partial class ProductsPage : Page
         }
     }
 
-    private async System.Threading.Tasks.Task ShowErrorDialogAsync(string errorMessage)
-    {
-        var errorDialog = new ContentDialog
-        {
-            Title = "Error",
-            Content = errorMessage,
-            CloseButtonText = "OK",
-            XamlRoot = this.XamlRoot
-        };
-        await errorDialog.ShowAsync();
-    }
-
     private void NumericOnly_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
     {
         if (sender.Text.Any(c => !char.IsDigit(c)))
@@ -98,4 +113,7 @@ public sealed partial class ProductsPage : Page
             sender.SelectionStart = selectionStart > sender.Text.Length ? sender.Text.Length : selectionStart;
         }
     }
+
+    #endregion
+
 }

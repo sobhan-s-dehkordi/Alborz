@@ -1,17 +1,28 @@
-using Alborz.Application.Features.Products.Queries;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-
+using Microsoft.UI.Xaml.Controls;
+using Alborz.Application.Features.Products.Queries;
 
 namespace Alborz.WinUI.Views.Products;
 
-
 public sealed partial class ProductEditorDialog : ContentDialog
 {
+
+    #region <Properties>
+
     public bool IsEditMode { get; }
     public int EditProductId { get; }
+    public string ProductName => NameTextBox.Text;
+    public string Barcode => BarcodeTextBox.Text;
+    public decimal PurchasePrice => decimal.TryParse(PurchasePriceTextBox.Text.Replace(",", ""), out var p) ? p : 0;
+    public decimal SellPrice => decimal.TryParse(SellPriceTextBox.Text.Replace(",", ""), out var s) ? s : 0;
+    public int InitialStock => int.TryParse(InitialStockTextBox.Text, out var i) ? i : 0;
+    public int ReorderPoint => int.TryParse(ReorderPointTextBox.Text, out var r) ? r : 0;
+
+    #endregion
+
+    #region <Constructor>
 
     public ProductEditorDialog()
     {
@@ -35,6 +46,10 @@ public sealed partial class ProductEditorDialog : ContentDialog
         InitialStockTextBox.Text = productToEdit.StockQuantity.ToString();
         InitialStockTextBox.IsEnabled = false;
     }
+
+    #endregion
+
+    #region <Event Handlers>
 
     private void ContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
     {
@@ -82,21 +97,5 @@ public sealed partial class ProductEditorDialog : ContentDialog
         }
     }
 
-    private void DecimalOnly_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
-    {
-        string text = sender.Text;
-        if (text.Any(c => !char.IsDigit(c) && c != '.'))
-        {
-            int pos = sender.SelectionStart;
-            sender.Text = new string(text.Where(c => char.IsDigit(c) || c == '.').ToArray());
-            sender.SelectionStart = pos > sender.Text.Length ? sender.Text.Length : pos;
-        }
-    }
-
-    public string ProductName => NameTextBox.Text;
-    public string Barcode => BarcodeTextBox.Text;
-    public decimal PurchasePrice => decimal.TryParse(PurchasePriceTextBox.Text.Replace(",", ""), out var p) ? p : 0;
-    public decimal SellPrice => decimal.TryParse(SellPriceTextBox.Text.Replace(",", ""), out var s) ? s : 0;
-    public int InitialStock => int.TryParse(InitialStockTextBox.Text, out var i) ? i : 0;
-    public int ReorderPoint => int.TryParse(ReorderPointTextBox.Text, out var r) ? r : 0;
+    #endregion
 }

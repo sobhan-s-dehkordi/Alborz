@@ -1,15 +1,21 @@
-using Alborz.Application.Features.Parties.Queries;
 using Microsoft.UI.Xaml.Controls;
-
+using Alborz.Application.Features.Parties.Queries;
 
 namespace Alborz.WinUI.Views.Parties;
 
 public sealed partial class PartyEditorDialog : ContentDialog
 {
+
+    #region <Properties>
+
     public string PartyName => NameTextBox.Text;
     public string PartyPhone => PhoneTextBox.Text;
     public bool IsSupplier => SupplierCheckBox.IsChecked ?? false;
     public bool IsCustomer => CustomerCheckBox.IsChecked ?? false;
+
+    #endregion
+
+    #region <Constructor>
 
     public PartyEditorDialog(PartyDto? existingParty = null)
     {
@@ -24,6 +30,10 @@ public sealed partial class PartyEditorDialog : ContentDialog
         }
     }
 
+    #endregion
+
+    #region <Event Handlers>
+
     private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         if (string.IsNullOrWhiteSpace(NameTextBox.Text))
@@ -31,4 +41,6 @@ public sealed partial class PartyEditorDialog : ContentDialog
             args.Cancel = true;
         }
     }
+
+    #endregion
 }
