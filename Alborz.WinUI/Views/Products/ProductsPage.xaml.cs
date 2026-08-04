@@ -5,7 +5,7 @@ using ProjectName.WinUI.ViewModels;
 using System;
 using System.Linq;
 
-namespace Alborz.WinUI.Views;
+namespace Alborz.WinUI.Views.Products;
 
 
 public sealed partial class ProductsPage : Page

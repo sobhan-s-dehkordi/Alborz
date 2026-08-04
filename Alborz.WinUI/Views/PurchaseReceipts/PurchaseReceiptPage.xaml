@@ -1,5 +1,5 @@
 <Page
-    x:Class="Alborz.WinUI.Views.PurchaseReceiptPage"
+    x:Class="Alborz.WinUI.Views.PurchaseReceipts.PurchaseReceiptPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
@@ -20,12 +20,24 @@
 
         <Border Grid.Row="0" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
             <StackPanel Orientation="Horizontal" Spacing="16">
-                <ComboBox Header="Supplier / Party" 
-                          ItemsSource="{x:Bind ViewModel.Suppliers}" 
-                          SelectedItem="{x:Bind ViewModel.SelectedSupplier, Mode=TwoWay}"
-                          DisplayMemberPath="Name" 
-                          Width="250"
-                          PlaceholderText="Select Supplier"/>
+                <AutoSuggestBox Header="Supplier / Party" 
+                                Text="{x:Bind ViewModel.SearchSupplierText, Mode=TwoWay}" 
+                                ItemsSource="{x:Bind ViewModel.SupplierSearchResults, Mode=OneWay}"
+                                TextChanged="SupplierSearchBox_TextChanged"
+                                SuggestionChosen="SupplierSearchBox_SuggestionChosen"
+                                TextMemberPath="Name" 
+                                UpdateTextOnSelect="False"
+                                Width="250"
+                                PlaceholderText="Type supplier name...">
+                                    <AutoSuggestBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding Name}"/>
+                                                <TextBlock Text="{Binding Phone}" Foreground="Gray" FontSize="12" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </AutoSuggestBox.ItemTemplate>
+                </AutoSuggestBox>
 
                 <DatePicker Header="Receipt Date" 
                             Date="{x:Bind ViewModel.ReceiptDate, Mode=TwoWay}" 
@@ -39,16 +51,22 @@
         </Border>
 
         <Border Grid.Row="1" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
-            <Grid ColumnSpacing="16">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="250"/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <StackPanel Spacing="12">
 
-                <AutoSuggestBox Grid.Column="0" 
+                <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}" 
+                 Severity="Error" 
+                 Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
+
+                <Grid ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="130"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <AutoSuggestBox Grid.Column="0" 
                                 Header="Search Product (Code/Name/Barcode)" 
                                 Text="{x:Bind ViewModel.SearchProductText, Mode=TwoWay}" 
                                 ItemsSource="{x:Bind ViewModel.ProductSearchResults, Mode=OneWay}"
@@ -57,32 +75,30 @@
                                 TextMemberPath="Name"
                                 UpdateTextOnSelect="False"
                                 PlaceholderText="Type to search...">
-                    <AutoSuggestBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="{Binding Id}" Foreground="Gray"/>
-                                <TextBlock Text="{Binding Name}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </AutoSuggestBox.ItemTemplate>
-                </AutoSuggestBox>
+                        <AutoSuggestBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{Binding Id}" Foreground="Gray"/>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </AutoSuggestBox.ItemTemplate>
+                    </AutoSuggestBox>
 
-                <TextBox Grid.Column="1" Header="Qty" Text="{x:Bind ViewModel.InputQuantity, Mode=TwoWay}"/>
+                    <TextBox Grid.Column="1" Header="Qty" Text="{x:Bind ViewModel.InputQuantity, Mode=TwoWay}"/>
 
-                <TextBox Grid.Column="2" Header="Unit Price" Text="{x:Bind ViewModel.InputPrice, Mode=TwoWay}" TextChanging="Currency_TextChanging"/>
+                    <TextBox Grid.Column="2" Header="Unit Price" Text="{x:Bind ViewModel.InputPrice, Mode=TwoWay}" TextChanging="Currency_TextChanging"/>
 
-                <NumberBox Grid.Column="3" 
-                   Header="Discount (%)" 
-                   Value="{x:Bind ViewModel.InputDiscountPercentage, Mode=TwoWay}" 
-                   SmallChange="5" 
-                   LargeChange="5" 
-                   Minimum="0" 
-                   Maximum="100" 
-                   SpinButtonPlacementMode="Inline"/>
+                    <TextBox Grid.Column="3"
+                             Header="Discount (%)" 
+                             Text="{x:Bind ViewModel.InputDiscountPercentage, Mode=TwoWay}" 
+                             TextChanging="NumericOnly_TextChanging"
+                             PlaceholderText="e.g. 0, 5, 10"/>
 
-                <Button Grid.Column="4" Content="Add to List" Command="{x:Bind ViewModel.AddToReceiptCommand}" VerticalAlignment="Bottom" Style="{ThemeResource AccentButtonStyle}" Width="150"/>
-                
-            </Grid>
+                    <Button Grid.Column="4" Content="Add to List" Command="{x:Bind ViewModel.AddToReceiptCommand}" VerticalAlignment="Bottom" Style="{ThemeResource AccentButtonStyle}" Width="150"/>
+
+                </Grid>
+            </StackPanel>
         </Border>
 
         <Border Grid.Row="2" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
@@ -107,7 +123,7 @@
                             </DataTemplate>
                         </controls:DataGridTemplateColumn.CellTemplate>
                     </controls:DataGridTemplateColumn>
-                    
+
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
         </Border>
@@ -209,20 +225,27 @@
         BorderThickness="1" CornerRadius="8" Padding="24">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    --><!-- Left side for inputs --><!--
+                    -->
+        <!-- Left side for inputs -->
+        <!--
                     <ColumnDefinition Width="*" />
-                    --><!-- Right side for financial summary --><!--
+                    -->
+        <!-- Right side for financial summary -->
+        <!--
                     <ColumnDefinition Width="350" />
                 </Grid.ColumnDefinitions>
 
-                --><!-- LEFT SIDE: Discount Input --><!--
+                -->
+        <!-- LEFT SIDE: Discount Input -->
+        <!--
                 <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
                     <TextBox Header="Global Discount Amount" 
                      Text="{x:Bind ViewModel.TotalDiscount, Mode=TwoWay}" 
                      TextChanging="Currency_TextChanging" 
                      Width="220" />
                 </StackPanel>-->
-                <!-- LEFT SIDE: Discount Input --><!--
+        <!-- LEFT SIDE: Discount Input -->
+        <!--
                 <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">
                     <TextBox Header="Global Discount Amount" 
              Text="{x:Bind ViewModel.TotalDiscount, Mode=TwoWay}" 
@@ -230,10 +253,14 @@
              Width="220" />
                 </StackPanel>
 
-                --><!-- RIGHT SIDE: Financial Summary --><!--
+                -->
+        <!-- RIGHT SIDE: Financial Summary -->
+        <!--
                 <StackPanel Grid.Column="1" Spacing="10">
 
-                    --><!-- 1. Total Amount --><!--
+                    -->
+        <!-- 1. Total Amount -->
+        <!--
                     <Grid>
                         <TextBlock Text="Total Amount:" 
                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
@@ -242,7 +269,9 @@
                    FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
                     </Grid>
 
-                    --><!-- 2. Total Line Discounts --><!--
+                    -->
+        <!-- 2. Total Line Discounts -->
+        <!--
                     <Grid>
                         <TextBlock Text="Total Line Discounts:" 
                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
@@ -251,7 +280,9 @@
                    Foreground="IndianRed" HorizontalAlignment="Right" FontSize="14"/>
                     </Grid>
 
-                    --><!-- 3. Overall Discount (Line + Global) --><!--
+                    -->
+        <!-- 3. Overall Discount (Line + Global) -->
+        <!--
                     <Grid>
                         <TextBlock Text="Overall Discount (Line + Global):" 
                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
@@ -260,10 +291,14 @@
                    Foreground="IndianRed" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
                     </Grid>
 
-                    --><!-- Divider Line --><!--
+                    -->
+        <!-- Divider Line -->
+        <!--
                     <MenuFlyoutSeparator Margin="0,6" />
 
-                    --><!-- 4. Net Payable Amount --><!--
+                    -->
+        <!-- 4. Net Payable Amount -->
+        <!--
                     <Grid>
                         <TextBlock Text="Net Payable:" 
                    Style="{ThemeResource SubtitleTextBlockStyle}" 
@@ -275,7 +310,9 @@
                    HorizontalAlignment="Right"/>
                     </Grid>
 
-                    --><!-- 5. Action Button --><!--
+                    -->
+        <!-- 5. Action Button -->
+        <!--
                     <Button Content="Submit Purchase Receipt" 
             Command="{x:Bind ViewModel.SaveReceiptCommand}" 
             Style="{ThemeResource AccentButtonStyle}" 
@@ -286,9 +323,12 @@
                 </StackPanel>
 
 
-                --><!--<StackPanel Grid.Column="1" Spacing="12">
+                -->
+        <!--<StackPanel Grid.Column="1" Spacing="12">
 
-                    --><!-- 1. Gross Total --><!--
+                    -->
+        <!-- 1. Gross Total -->
+        <!--
                     <Grid>
                         <TextBlock Text="Total Amount:" 
                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
@@ -297,10 +337,14 @@
                            FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="16"/>
                     </Grid>
 
-                    --><!-- Divider Line --><!--
+                    -->
+        <!-- Divider Line -->
+        <!--
                     <MenuFlyoutSeparator Margin="0,4" />
 
-                    --><!-- 2. Net Payable Amount --><!--
+                    -->
+        <!-- 2. Net Payable Amount -->
+        <!--
                     <Grid>
                         <TextBlock Text="Net Payable:" 
                            Style="{ThemeResource SubtitleTextBlockStyle}" 
@@ -312,7 +356,9 @@
                            HorizontalAlignment="Right"/>
                     </Grid>
 
-                    --><!-- 3. Action Button --><!--
+                    -->
+        <!-- 3. Action Button -->
+        <!--
                     <Button Content="Submit Purchase Receipt" 
                     Command="{x:Bind ViewModel.SaveReceiptCommand}" 
                     Style="{ThemeResource AccentButtonStyle}" 
@@ -320,7 +366,8 @@
                     Height="48" 
                     Margin="0,12,0,0"
                     FontSize="16" FontWeight="SemiBold"/>
-                </StackPanel>--><!--
+                </StackPanel>-->
+        <!--
             </Grid>
         </Border>-->
     </Grid>

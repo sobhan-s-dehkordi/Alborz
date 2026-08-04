@@ -1,10 +1,11 @@
+using Alborz.Application.Features.Parties.Queries;
 using Alborz.Application.Features.Products.Queries;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using ProjectName.WinUI.ViewModels;
 using System.Linq;
 
-namespace Alborz.WinUI.Views
+namespace Alborz.WinUI.Views.PurchaseReceipts
 {
     public sealed partial class PurchaseReceiptPage : Page
     {
@@ -49,8 +50,43 @@ namespace Alborz.WinUI.Views
                 ViewModel.SelectProduct(selectedProduct);
             }
         }
+        private void SupplierSearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                if (string.IsNullOrWhiteSpace(sender.Text))
+                {
+                    ViewModel.SelectedSupplier = null;
+                    ViewModel.SupplierSearchResults.Clear();
+                    return;
+                }
 
-    
+                ViewModel.SearchSuppliersCommand.Execute(sender.Text);
+            }
+        }
+
+        private void SupplierSearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            if (args.SelectedItem is PartyDto selectedSupplier)
+            {
+                ViewModel.SelectedSupplier = selectedSupplier;
+
+                sender.Text = selectedSupplier.Name;
+            }
+        }
+        private void NumericOnly_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
+        {
+            if (sender.Text.Any(c => !char.IsDigit(c)))
+            {
+                string numericText = new string(sender.Text.Where(char.IsDigit).ToArray());
+
+                int selectionStart = sender.SelectionStart;
+                sender.Text = numericText;
+
+                sender.SelectionStart = selectionStart > sender.Text.Length ? sender.Text.Length : selectionStart;
+            }
+        }
+
         private void Currency_TextChanging(TextBox sender, TextBoxTextChangingEventArgs args)
         {
             string rawText = sender.Text.Replace(",", "");

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 
 
-namespace Alborz.WinUI.Views;
+namespace Alborz.WinUI.Views.Products;
 
 
 public sealed partial class ProductEditorDialog : ContentDialog

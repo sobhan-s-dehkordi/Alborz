@@ -9,7 +9,6 @@ public class CurrencyFormatConverter : IValueConverter
     {
         if (value is decimal decimalValue)
         {
-            // Format: "N0" means numbers with thousands separators and 0 decimal places.
             return decimalValue.ToString("N0");
         }
         return value;

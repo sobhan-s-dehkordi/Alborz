@@ -53,8 +53,44 @@ public partial class PurchaseReceiptViewModel : ObservableObject
 
     public decimal TotalLineDiscounts => ReceiptItems.Sum(x => x.DiscountAmount);
 
+
     [ObservableProperty]
-    private double _inputDiscountPercentage = 0;
+    private string _searchSupplierText = string.Empty;
+
+    public ObservableCollection<PartyDto> SupplierSearchResults { get; } = new();
+
+    [RelayCommand]
+    public async Task SearchSuppliersAsync(string searchText)
+    {
+        if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
+        {
+            SupplierSearchResults.Clear();
+            SelectedSupplier = null;
+            return;
+        }
+
+        using var scope = _scopeFactory.CreateScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        var results = await mediator.Send(new SearchSupplierSuggestQuery(searchText));
+
+        SupplierSearchResults.Clear();
+        foreach (var item in results)
+        {
+            SupplierSearchResults.Add(item);
+        }
+    }
+
+
+
+    [ObservableProperty]
+    private string _inputDiscountPercentage = "0";
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasError))]
+    private string _errorMessage = string.Empty;
+
+    public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
 
     [RelayCommand]
     public void RemoveItem(ReceiptItemUIModel item)
@@ -99,23 +135,23 @@ public partial class PurchaseReceiptViewModel : ObservableObject
             OnPropertyChanged(nameof(OverallTotalDiscount));
         };
 
-        _ = LoadSuppliersAsync();
+        //_ = LoadSuppliersAsync();
     }
 
-    private async Task LoadSuppliersAsync()
-    {
-        using var scope = _scopeFactory.CreateScope();
-        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+    //private async Task LoadSuppliersAsync()
+    //{
+    //    using var scope = _scopeFactory.CreateScope();
+    //    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var suppliers = await mediator.Send(new GetSuppliersQuery());
+    //    var suppliers = await mediator.Send(new GetSuppliersQuery());
 
-        Suppliers.Clear();
+    //    Suppliers.Clear();
 
-        foreach (var supplier in suppliers)
-        {
-            Suppliers.Add(supplier);
-        }
-    }
+    //    foreach (var supplier in suppliers)
+    //    {
+    //        Suppliers.Add(supplier);
+    //    }
+    //}
 
 
     [RelayCommand]
@@ -151,49 +187,31 @@ public partial class PurchaseReceiptViewModel : ObservableObject
         }        
     }
 
-    //[RelayCommand]
-    //public void AddToReceipt()
-    //{
-    //    if (_selectedProductFromSearch == null) return;
-
-    //    decimal price = decimal.TryParse(InputPrice.Replace(",", ""), out var p) ? p : 0;
-    //    decimal discount = decimal.TryParse(InputItemDiscount.Replace(",", ""), out var d) ? d : 0;
-
-    //    ReceiptItems.Add(new ReceiptItemUIModel
-    //    {
-    //        ProductId = _selectedProductFromSearch.Id,
-    //        ProductName = _selectedProductFromSearch.Name,
-    //        Quantity = InputQuantity,
-    //        UnitPrice = price,
-    //        DiscountAmount = discount
-    //    });
-
-    //    SearchProductText = string.Empty;
-    //    _selectedProductFromSearch = null;
-    //    InputQuantity = 1;
-    //    InputPrice = "0";
-    //    InputItemDiscount = "0";
-
-    //    OnPropertyChanged(nameof(TotalAmount));
-    //    OnPropertyChanged(nameof(NetAmount));
-    //}
-
     [RelayCommand]
     public void AddToReceipt()
     {
-        // REQUIREMENT 2: Block adding if no product is actually selected
+        ErrorMessage = string.Empty;
+
+        if (!int.TryParse(InputDiscountPercentage, out int discountPercent))
+        {
+            discountPercent = 0;
+        }
+
+        if (discountPercent < 0 || discountPercent > 100 || discountPercent % 5 != 0)
+        {
+            ErrorMessage = "Discount must be a multiple of 5 (e.g., 0, 5, 10, 15) and between 0 and 100.";
+            return;
+        }
+        // ---------------------------------------
+
         if (_selectedProductFromSearch == null) return;
 
         if (InputQuantity <= 0) return;
         if (!decimal.TryParse(InputPrice.Replace(",", ""), out decimal price)) return;
 
-        // REQUIREMENT 3: Calculate the actual discount amount mathematically
-        // Formula: (Price * Quantity) * (Percentage / 100) 
-        // OR just Unit Price * (Percentage / 100) depending on your UI Model.
-        // Assuming you calculate total discount for that specific line item:
 
         decimal totalLinePrice = price * InputQuantity;
-        decimal calculatedDiscountAmount = totalLinePrice * (decimal)(InputDiscountPercentage / 100.0);
+        decimal calculatedDiscountAmount = totalLinePrice * (decimal)(Convert.ToInt32(InputDiscountPercentage) / 100.0);
 
         var newItem = new ReceiptItemUIModel
         {
@@ -206,14 +224,12 @@ public partial class PurchaseReceiptViewModel : ObservableObject
 
         ReceiptItems.Add(newItem);
 
-        // Reset inputs for the next item
         _selectedProductFromSearch = null;
         SearchProductText = string.Empty;
         InputQuantity = 1;
         InputPrice = "0";
-        InputDiscountPercentage = 0; // Reset percentage to 0
+        InputDiscountPercentage = "0";
 
-        // Update Summaries
         OnPropertyChanged(nameof(TotalAmount));
         OnPropertyChanged(nameof(TotalLineDiscounts));
         OnPropertyChanged(nameof(NetAmount));

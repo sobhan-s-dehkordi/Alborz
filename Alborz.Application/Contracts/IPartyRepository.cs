@@ -8,4 +8,5 @@ public interface IPartyRepository
     Task<IEnumerable<Party>> GetAllAsync(string? searchTerm = null);
     Task AddAsync(Party party);
     void Update(Party party);
+    Task<IEnumerable<Party>> SearchSuppliersFastAsync(string searchTerm);
 }

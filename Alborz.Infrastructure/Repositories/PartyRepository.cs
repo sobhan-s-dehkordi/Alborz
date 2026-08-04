@@ -40,4 +40,14 @@ public class PartyRepository : IPartyRepository
     {
         _context.Parties.Update(party);
     }
+
+    public async Task<IEnumerable<Party>> SearchSuppliersFastAsync(string searchTerm)
+    {
+        var term = searchTerm.Trim();
+
+        return await _context.Parties
+            .Where(p => p.IsSupplier && p.Name.Contains(term))
+            .Take(5)
+            .ToListAsync();
+    }
 }

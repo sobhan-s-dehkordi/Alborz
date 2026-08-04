@@ -2,7 +2,7 @@ using Alborz.Application.Features.Parties.Queries;
 using Microsoft.UI.Xaml.Controls;
 
 
-namespace Alborz.WinUI.Views;
+namespace Alborz.WinUI.Views.Parties;
 
 public sealed partial class PartyEditorDialog : ContentDialog
 {

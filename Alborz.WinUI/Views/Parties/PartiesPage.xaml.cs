@@ -6,7 +6,7 @@ using ProjectName.WinUI.ViewModels;
 using System;
 
 
-namespace Alborz.WinUI.Views;
+namespace Alborz.WinUI.Views.Parties;
 
 public sealed partial class PartiesPage : Page
 {

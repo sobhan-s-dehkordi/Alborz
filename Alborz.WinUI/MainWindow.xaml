@@ -71,10 +71,6 @@
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE713;"/>
                     </NavigationViewItem.Icon>
-                    <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Theme Settings" Tag="ThemeSettingsPage">
-                        </NavigationViewItem>
-                    </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 

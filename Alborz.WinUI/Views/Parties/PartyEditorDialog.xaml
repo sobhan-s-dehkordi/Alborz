@@ -1,5 +1,5 @@
 <ContentDialog
-    x:Class="Alborz.WinUI.Views.PartyEditorDialog"
+    x:Class="Alborz.WinUI.Views.Parties.PartyEditorDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Party Details"
