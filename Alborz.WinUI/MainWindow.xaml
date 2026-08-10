@@ -29,7 +29,7 @@
                     <NavigationViewItem.MenuItems>
                         <NavigationViewItem Content="Products" Tag="ProductsPage"/>
                         <NavigationViewItem Content="Purchase Receipt" Tag="PurchaseReceiptPage"/>
-                        <NavigationViewItem Content="Purchase Archive" Tag="PurchaseArchivePage"/>
+                        <NavigationViewItem Content="Purchase History" Tag="PurchaseHistoryPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 

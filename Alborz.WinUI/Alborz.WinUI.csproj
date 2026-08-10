@@ -19,6 +19,7 @@
     <None Remove="Views\ProductEditorDialog.xaml" />
     <None Remove="Views\ProductsPage.xaml" />
     <None Remove="Views\PurchaseReceiptPage.xaml" />
+    <None Remove="Views\PurchaseReceipts\PurchaseHistoryPage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -83,9 +84,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\PurchaseReceipts\" />
     <Folder Include="Views\Products\" />
     <Folder Include="Views\Parties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\PurchaseReceipts\PurchaseHistoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <!--

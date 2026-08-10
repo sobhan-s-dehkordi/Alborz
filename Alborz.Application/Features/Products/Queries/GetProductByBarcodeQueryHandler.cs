@@ -1,8 +1,7 @@
 ﻿using Alborz.Application.Contracts;
-using Alborz.Application.Features.Products.Queries;
 using MediatR;
 
-namespace Alborz.Application.Features.PurchaseReceipts.Queries;
+namespace Alborz.Application.Features.Products.Queries;
 
 public class GetProductByBarcodeQueryHandler : IRequestHandler<GetProductByBarcodeQuery, ProductDto?>
 {

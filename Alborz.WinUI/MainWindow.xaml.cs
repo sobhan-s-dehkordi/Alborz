@@ -69,7 +69,9 @@ public sealed partial class MainWindow : Window
         {
             "ProductsPage" => typeof(Views.Products.ProductsPage),
             "PurchaseReceiptPage" => typeof(Views.PurchaseReceipts.PurchaseReceiptPage),
-            "PartiesPage" => typeof(Views.Parties.PartiesPage)
+            "PartiesPage" => typeof(Views.Parties.PartiesPage),
+            "PurchaseHistoryPage" => typeof (Views.PurchaseReceipts.PurchaseHistoryPage),
+
         };
 
         OpenOrFocusTab(header, pageType, item.Icon);
