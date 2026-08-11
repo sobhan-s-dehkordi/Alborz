@@ -58,6 +58,9 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     public bool IsReceiptSelected => SelectedReceipt != null;
 
     public decimal TotalAmountSummary => Receipts.Sum(r => r.TotalAmount);
+    public decimal TotalDiscountSummary => Receipts.Sum(r => r.TotalDiscount);
+    public decimal TotalAdditionalChargesSummary => Receipts.Sum(r => r.AdditionalCharges);
+    public decimal TotalNetAmountSummary => Receipts.Sum(r => r.NetAmount);
 
     #endregion
 
@@ -71,6 +74,9 @@ public partial class PurchaseHistoryViewModel : ObservableObject
         {
             OnPropertyChanged(nameof(HasReceipts));
             OnPropertyChanged(nameof(TotalAmountSummary));
+            OnPropertyChanged(nameof(TotalDiscountSummary));
+            OnPropertyChanged(nameof(TotalAdditionalChargesSummary));
+            OnPropertyChanged(nameof(TotalNetAmountSummary));
         };
 
         _ = SearchReceiptsAsync();

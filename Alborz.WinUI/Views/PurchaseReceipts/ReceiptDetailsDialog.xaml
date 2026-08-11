@@ -16,10 +16,11 @@
         <converters:CurrencyFormatConverter x:Key="CurrencyConverter" />
     </ContentDialog.Resources>
 
-    <Grid Width="900" Height="550" RowSpacing="16">
+    <Grid Width="900" Height="650" RowSpacing="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0" Background="{ThemeResource LayerFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
@@ -59,5 +60,42 @@
                 <controls:DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice, Converter={StaticResource CurrencyConverter}}" Width="160"/>
             </controls:DataGrid.Columns>
         </controls:DataGrid>
+
+        <Border Grid.Row="2" Background="{ThemeResource LayerFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="300" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,24,0">
+                    <TextBlock Text="Remarks:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Margin="0,0,0,4"/>
+                    <TextBlock Text="{x:Bind Receipt.Remarks}" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}" MaxHeight="80"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Spacing="8" VerticalAlignment="Bottom">
+                    <Grid>
+                        <TextBlock Text="Total Amount:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Receipt.TotalAmount, Converter={StaticResource CurrencyConverter}}" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid>
+                        <TextBlock Text="Global Discount:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Receipt.TotalDiscount, Converter={StaticResource CurrencyConverter}}" Foreground="IndianRed" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid>
+                        <TextBlock Text="Additional Charges:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{x:Bind Receipt.AdditionalCharges, Converter={StaticResource CurrencyConverter}}" Foreground="SeaGreen" HorizontalAlignment="Right"/>
+                    </Grid>
+
+                    <MenuFlyoutSeparator Margin="0,4" />
+
+                    <Grid>
+                        <TextBlock Text="Net Amount:" Style="{ThemeResource SubtitleTextBlockStyle}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="{x:Bind Receipt.NetAmount, Converter={StaticResource CurrencyConverter}}" Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" HorizontalAlignment="Right"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Border>
+
     </Grid>
 </ContentDialog>
