@@ -1,13 +1,14 @@
-﻿using System;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
-using Alborz.Application.Contracts;
+﻿using Alborz.Application.Contracts;
 using Alborz.Application.Features.Products.Commands;
 using Alborz.Infrastructure.Data;
 using Alborz.Infrastructure.Repositories;
+using Alborz.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using ProjectName.WinUI.ViewModels;
+using System;
+using System.IO;
 
 namespace Alborz.WinUI;
 
@@ -67,6 +68,9 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddScoped<IInvoiceRepository, InvoiceRepository>();
         services.AddScoped<IPartyRepository, PartyRepository>();
         services.AddScoped<IPurchaseReceiptRepository, PurchaseReceiptRepository>();
+
+        // Services
+        services.AddScoped<IExcelExportService, ExcelExportService>();
 
         // MediatR
         services.AddMediatR(cfg =>

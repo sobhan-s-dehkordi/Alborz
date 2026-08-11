@@ -106,7 +106,8 @@
                     
                     <Button Content="Export to Excel" 
                             Command="{x:Bind ViewModel.ExportToExcelCommand}" 
-                            Style="{ThemeResource AccentButtonStyle}"                            
+                            Style="{ThemeResource AccentButtonStyle}"
+                            IsEnabled="{x:Bind ViewModel.HasReceipts, Mode=OneWay}"
                             Width="120"/>
 
                     <Button Content="Details" 
