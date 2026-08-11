@@ -42,4 +42,29 @@ public class PurchaseReceipt : BaseEntity
     {
         TotalAmount = _items.Sum(i => i.TotalPrice);
     }
+
+    public void UpdateDetails(int partyId, DateTime receiptDate, string referenceNumber, decimal totalDiscount, decimal additionalCharges, string remarks)
+    {
+        PartyId = partyId;
+        ReceiptDate = receiptDate;
+        ReferenceNumber = referenceNumber;
+        TotalDiscount = totalDiscount;
+        AdditionalCharges = additionalCharges;
+        Remarks = remarks;
+
+        CalculateTotal();
+    }
+
+    public void ClearItems()
+    {
+        _items.Clear();
+        CalculateTotal();
+    }
+
+    public void AddItem(int productId, int quantity, decimal unitPrice, decimal discountAmount)
+    {
+        var item = new PurchaseReceiptItem(productId, quantity, unitPrice, discountAmount);
+        _items.Add(item);
+        CalculateTotal();
+    }
 }

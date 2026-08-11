@@ -16,7 +16,7 @@ public partial class App : Microsoft.UI.Xaml.Application
 
     #region <Fields>
 
-    private Window? _window;
+    public MainWindow AppWindow { get; private set; }
 
     #endregion
 
@@ -87,8 +87,8 @@ public partial class App : Microsoft.UI.Xaml.Application
 
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
-        _window = new MainWindow();
-        _window.Activate();
+        AppWindow = new MainWindow();
+        AppWindow.Activate();
     }
 
     #endregion

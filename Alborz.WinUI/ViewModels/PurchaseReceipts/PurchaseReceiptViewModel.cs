@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Alborz.Application.Features.Parties.Queries;
+using Alborz.Application.Features.Products.Queries;
+using Alborz.Application.Features.PurchaseReceipts.Commands;
+using Alborz.Application.Features.PurchaseReceipts.Queries;
+using Alborz.WinUI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
-using Alborz.Application.Features.Parties.Queries;
-using Alborz.Application.Features.Products.Queries;
-using Alborz.Application.Features.PurchaseReceipts.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectName.WinUI.ViewModels;
 
@@ -19,6 +21,7 @@ public partial class PurchaseReceiptViewModel : ObservableObject
 
     private readonly IServiceScopeFactory _scopeFactory;
     private ProductDto? _selectedProductFromSearch;
+    private int? _editingReceiptId;
 
     #endregion
 
@@ -32,6 +35,9 @@ public partial class PurchaseReceiptViewModel : ObservableObject
     #endregion
 
     #region <Observable & Computed Properties>
+
+    [ObservableProperty]
+    private string _submitButtonText = "Submit Purchase Receipt";
 
     [ObservableProperty]
     private PartyDto? _selectedSupplier;
@@ -244,29 +250,109 @@ public partial class PurchaseReceiptViewModel : ObservableObject
         if (!ReceiptItems.Any() || SelectedSupplier == null) return;
 
         decimal globalDiscount = decimal.TryParse(TotalDiscount.Replace(",", ""), out var td) ? td : 0;
-
         var itemsDto = ReceiptItems.Select(x => new PurchaseItemDto(x.ProductId, x.Quantity, x.UnitPrice, x.DiscountAmount)).ToList();
-
-        var command = new CreatePurchaseReceiptCommand(
-            SelectedSupplier.Id,
-            ReceiptDate.DateTime,
-            ReferenceNumber,
-            globalDiscount,
-            AdditionalChargesValue,
-            Remarks,
-            itemsDto);
 
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        await mediator.Send(command);
+        if (_editingReceiptId.HasValue)
+        {
+            var command = new UpdatePurchaseReceiptCommand(
+                _editingReceiptId.Value,
+                SelectedSupplier.Id,
+                ReceiptDate.DateTime,
+                ReferenceNumber,
+                globalDiscount,
+                AdditionalChargesValue,
+                Remarks,
+                itemsDto);
 
-        // Reset UI
-        ReceiptItems.Clear();
-        ReferenceNumber = string.Empty;
-        TotalDiscount = "0";
-        AdditionalCharges = "0";
-        Remarks = string.Empty;
+            await mediator.Send(command);
+
+            if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
+            {
+                var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                {
+                    Title = "Success",
+                    Content = $"Receipt #{_editingReceiptId.Value} has been updated successfully.",
+                    CloseButtonText = "OK",
+                    XamlRoot = app.AppWindow.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+
+                string uniqueTag = $"PurchaseReceipt_Edit_{_editingReceiptId.Value}";
+                app.AppWindow.CloseTab(uniqueTag);
+            }
+        }
+        else
+        {
+            var command = new CreatePurchaseReceiptCommand(
+                SelectedSupplier.Id,
+                ReceiptDate.DateTime,
+                ReferenceNumber,
+                globalDiscount,
+                AdditionalChargesValue,
+                Remarks,
+                itemsDto);
+
+            await mediator.Send(command);
+
+            ReceiptItems.Clear();
+            ReferenceNumber = string.Empty;
+            TotalDiscount = "0";
+            AdditionalCharges = "0";
+            Remarks = string.Empty;
+        }
+    }
+
+    public async Task InitializeAsync(int? receiptId)
+    {
+        _editingReceiptId = receiptId;
+
+        if (receiptId.HasValue)
+        {
+            SubmitButtonText = "Update Purchase Receipt";
+
+            using var scope = _scopeFactory.CreateScope();
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+            var receipt = await mediator.Send(new GetPurchaseReceiptByIdQuery(receiptId.Value));
+
+            if (receipt != null)
+            {
+                SearchSupplierText = receipt.SupplierName;
+
+                SelectedSupplier = new PartyDto(receipt.SupplierId, receipt.SupplierName, "", true, false);
+
+                ReceiptDate = receipt.ReceiptDate;
+                ReferenceNumber = receipt.ReferenceNumber;
+                TotalDiscount = receipt.TotalDiscount.ToString("N0");
+                AdditionalCharges = receipt.AdditionalCharges.ToString("N0");
+                Remarks = receipt.Remarks;
+
+                ReceiptItems.Clear();
+                foreach (var item in receipt.Items)
+                {
+                    ReceiptItems.Add(new ReceiptItemUIModel
+                    {
+                        ProductId = item.ProductId,
+                        ProductName = item.ProductName,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        DiscountAmount = item.DiscountAmount
+                    });
+                }
+
+                OnPropertyChanged(nameof(TotalAmount));
+                OnPropertyChanged(nameof(TotalLineDiscounts));
+                OnPropertyChanged(nameof(NetAmount));
+                OnPropertyChanged(nameof(OverallTotalDiscount));
+            }
+        }
+        else
+        {
+            SubmitButtonText = "Submit Purchase Receipt";
+        }
     }
 
     #endregion

@@ -19,11 +19,11 @@ public sealed partial class MainWindow : Window
 
     #region <Methods>
 
-    private void OpenOrFocusTab(string header, Type pageType, IconElement menuIcon)
+    public void OpenOrFocusTab(string header, Type pageType, IconElement menuIcon, string uniqueTag, object parameter = null)
     {
         var existingTab = MainTabView.TabItems
             .OfType<TabViewItem>()
-            .FirstOrDefault(t => t.Header.ToString() == header);
+            .FirstOrDefault(t => t.Tag?.ToString() == uniqueTag);
 
         if (existingTab != null)
         {
@@ -32,12 +32,14 @@ public sealed partial class MainWindow : Window
         }
 
         var frame = new Frame();
-        frame.Navigate(pageType);
+
+        frame.Navigate(pageType, parameter);
 
         var newTab = new TabViewItem
         {
             Header = header,
-            Content = frame
+            Content = frame,
+            Tag = uniqueTag
         };
 
         if (menuIcon is FontIcon fontIcon)
@@ -47,6 +49,18 @@ public sealed partial class MainWindow : Window
 
         MainTabView.TabItems.Add(newTab);
         MainTabView.SelectedItem = newTab;
+    }
+
+    public void CloseTab(string uniqueTag)
+    {
+        var tabToClose = MainTabView.TabItems
+            .OfType<TabViewItem>()
+            .FirstOrDefault(t => t.Tag?.ToString() == uniqueTag);
+
+        if (tabToClose != null)
+        {
+            MainTabView.TabItems.Remove(tabToClose);
+        }
     }
 
     #endregion
@@ -74,7 +88,10 @@ public sealed partial class MainWindow : Window
 
         };
 
-        OpenOrFocusTab(header, pageType, item.Icon);
+        if (pageType != null)
+        {
+            OpenOrFocusTab(header, pageType, item.Icon, pageTag);
+        }
     }
 
     private void MainTabView_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)

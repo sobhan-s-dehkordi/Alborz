@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
 
 namespace ProjectName.WinUI.ViewModels;
 

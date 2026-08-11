@@ -10,4 +10,6 @@ public interface IPurchaseReceiptRepository
         DateTime? fromDate,
         DateTime? toDate,
         string referenceNumber);
+    Task<PurchaseReceipt?> GetByIdWithItemsAsync(int id);
+    void Update(PurchaseReceipt receipt);
 }

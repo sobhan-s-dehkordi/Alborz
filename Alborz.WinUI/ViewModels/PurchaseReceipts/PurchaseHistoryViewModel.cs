@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Alborz.Application.Features.Parties.Queries;
+using Alborz.Application.Features.PurchaseReceipts.Commands;
+using Alborz.Application.Features.PurchaseReceipts.Queries;
+using Alborz.WinUI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
-using Alborz.Application.Features.Parties.Queries;
-using Alborz.Application.Features.PurchaseReceipts.Commands;
-using Alborz.Application.Features.PurchaseReceipts.Queries;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjectName.WinUI.ViewModels;
 
@@ -124,7 +126,19 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     {
         if (SelectedReceipt == null) return;
 
-        // کدهای مربوط به باز کردن فرم ویرایش (مثلاً نویگیت کردن به صفحه ویرایش یا باز کردن دیالوگ)
+        if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
+        {
+            string uniqueTag = $"PurchaseReceipt_Edit_{SelectedReceipt.Id}";
+            string header = $"Edit Receipt #{SelectedReceipt.Id}";
+
+            app.AppWindow.OpenOrFocusTab(
+                header,
+                typeof(Alborz.WinUI.Views.PurchaseReceipts.PurchaseReceiptPage),
+                null,
+                uniqueTag,
+                SelectedReceipt.Id);
+        }
+
         await Task.CompletedTask;
     }
 
@@ -133,8 +147,15 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     {
         if (SelectedReceipt == null) return;
 
-        // کدهای مربوط به نمایش دیالوگ جزئیات فاکتور و آیتم‌های آن
-        await Task.CompletedTask;
+        if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
+        {
+            var dialog = new Alborz.WinUI.Views.PurchaseReceipts.ReceiptDetailsDialog(SelectedReceipt)
+            {
+                XamlRoot = app.AppWindow.Content.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+        }
     }
 
     [RelayCommand]

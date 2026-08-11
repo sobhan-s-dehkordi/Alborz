@@ -56,4 +56,17 @@ public class PurchaseReceiptRepository : IPurchaseReceiptRepository
             .OrderByDescending(q => q.ReceiptDate)
             .ToListAsync();
     }
+    public async Task<PurchaseReceipt?> GetByIdWithItemsAsync(int id)
+    {
+        return await _context.PurchaseReceipts
+            .Include(pr => pr.Party)
+            .Include(pr => pr.Items)
+                .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(pr => pr.Id == id);
+    }
+
+    public void Update(PurchaseReceipt receipt)
+    {
+        _context.PurchaseReceipts.Update(receipt);
+    }
 }

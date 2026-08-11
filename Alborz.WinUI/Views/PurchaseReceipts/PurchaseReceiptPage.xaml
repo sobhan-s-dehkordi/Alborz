@@ -128,30 +128,6 @@
             </controls:DataGrid>
         </Border>
 
-        <!--<Border Grid.Row="3" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
-            <Grid>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="24">
-                    <TextBox Header="Total Receipt Discount" 
-                             Text="{x:Bind ViewModel.TotalDiscount, Mode=TwoWay}" 
-                             TextChanging="Currency_TextChanging" 
-                             Width="180"/>
-
-                    <StackPanel VerticalAlignment="Bottom" Spacing="4">
-                        <TextBlock Text="Total Amount:" Foreground="Gray"/>
-                        <TextBlock Text="{x:Bind ViewModel.TotalAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" />
-                    </StackPanel>
-
-                    <StackPanel VerticalAlignment="Bottom" Spacing="4">
-                        <TextBlock Text="Net Amount (Payable):" Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.NetAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                                   Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
-                    </StackPanel>
-                </StackPanel>
-
-                <Button Content="Submit Purchase" Command="{x:Bind ViewModel.SaveReceiptCommand}" Style="{ThemeResource AccentButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="180" Height="40"/>
-            </Grid>
-        </Border>-->
-
 
         <Border Grid.Row="3" Background="{ThemeResource LayerFillColorDefaultBrush}" 
         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
@@ -162,7 +138,6 @@
                     <ColumnDefinition Width="350" />
                 </Grid.ColumnDefinitions>
 
-                <!-- LEFT SIDE: Inputs -->
                 <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="16">
                         <TextBox Header="Global Discount" 
@@ -176,7 +151,6 @@
                          Width="220" />
                     </StackPanel>
 
-                    <!-- Remarks Textbox (Multiline) -->
                     <TextBox Header="Remarks / Notes" 
                      Text="{x:Bind ViewModel.Remarks, Mode=TwoWay}" 
                      Width="416" Height="80" 
@@ -184,12 +158,18 @@
                      PlaceholderText="Enter any additional notes here..."/>
                 </StackPanel>
 
-                <!-- RIGHT SIDE: Financial Summary -->
                 <StackPanel Grid.Column="1" Spacing="10">
 
                     <Grid>
-                        <TextBlock Text="Total Amount:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock Text="{x:Bind ViewModel.TotalAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
+                        <TextBlock Text="Total Amount:" 
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                   VerticalAlignment="Center" FontSize="14"/>
+                        <TextBlock Text="{x:Bind ViewModel.TotalAmount,
+                            Mode=OneWay,
+                            Converter={StaticResource CurrencyConverter}}"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Right"
+                                   FontSize="14"/>
                     </Grid>
 
                     <Grid>
@@ -202,7 +182,6 @@
                         <TextBlock Text="{x:Bind ViewModel.OverallTotalDiscount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="IndianRed" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
                     </Grid>
 
-                    <!-- NEW: Additional Charges Row -->
                     <Grid>
                         <TextBlock Text="Additional Charges:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
                         <TextBlock Text="{x:Bind ViewModel.AdditionalChargesValue, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="SeaGreen" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
@@ -215,160 +194,14 @@
                         <TextBlock Text="{x:Bind ViewModel.NetAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" HorizontalAlignment="Right"/>
                     </Grid>
 
-                    <Button Content="Submit Purchase Receipt" Command="{x:Bind ViewModel.SaveReceiptCommand}" Style="{ThemeResource AccentButtonStyle}" HorizontalAlignment="Stretch" Height="48" Margin="0,12,0,0" FontSize="16" FontWeight="SemiBold"/>
+                    <Button Content="{x:Bind ViewModel.SubmitButtonText, Mode=OneWay}" 
+                            Command="{x:Bind ViewModel.SaveReceiptCommand}" 
+                            Style="{ThemeResource AccentButtonStyle}" 
+                            HorizontalAlignment="Stretch" 
+                            Height="48" Margin="0,12,0,0" 
+                            FontSize="16" FontWeight="SemiBold"/>
                 </StackPanel>
             </Grid>
         </Border>
-
-        <!--<Border Grid.Row="3" Background="{ThemeResource LayerFillColorDefaultBrush}" 
-        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
-        BorderThickness="1" CornerRadius="8" Padding="24">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    -->
-        <!-- Left side for inputs -->
-        <!--
-                    <ColumnDefinition Width="*" />
-                    -->
-        <!-- Right side for financial summary -->
-        <!--
-                    <ColumnDefinition Width="350" />
-                </Grid.ColumnDefinitions>
-
-                -->
-        <!-- LEFT SIDE: Discount Input -->
-        <!--
-                <StackPanel Grid.Column="0" VerticalAlignment="Bottom">
-                    <TextBox Header="Global Discount Amount" 
-                     Text="{x:Bind ViewModel.TotalDiscount, Mode=TwoWay}" 
-                     TextChanging="Currency_TextChanging" 
-                     Width="220" />
-                </StackPanel>-->
-        <!-- LEFT SIDE: Discount Input -->
-        <!--
-                <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left">
-                    <TextBox Header="Global Discount Amount" 
-             Text="{x:Bind ViewModel.TotalDiscount, Mode=TwoWay}" 
-             TextChanging="Currency_TextChanging" 
-             Width="220" />
-                </StackPanel>
-
-                -->
-        <!-- RIGHT SIDE: Financial Summary -->
-        <!--
-                <StackPanel Grid.Column="1" Spacing="10">
-
-                    -->
-        <!-- 1. Total Amount -->
-        <!--
-                    <Grid>
-                        <TextBlock Text="Total Amount:" 
-                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
-                   VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock Text="{x:Bind ViewModel.TotalAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                   FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
-                    </Grid>
-
-                    -->
-        <!-- 2. Total Line Discounts -->
-        <!--
-                    <Grid>
-                        <TextBlock Text="Total Line Discounts:" 
-                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
-                   VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock Text="{x:Bind ViewModel.TotalLineDiscounts, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                   Foreground="IndianRed" HorizontalAlignment="Right" FontSize="14"/>
-                    </Grid>
-
-                    -->
-        <!-- 3. Overall Discount (Line + Global) -->
-        <!--
-                    <Grid>
-                        <TextBlock Text="Overall Discount (Line + Global):" 
-                   Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
-                   VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock Text="{x:Bind ViewModel.OverallTotalDiscount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                   Foreground="IndianRed" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
-                    </Grid>
-
-                    -->
-        <!-- Divider Line -->
-        <!--
-                    <MenuFlyoutSeparator Margin="0,6" />
-
-                    -->
-        <!-- 4. Net Payable Amount -->
-        <!--
-                    <Grid>
-                        <TextBlock Text="Net Payable:" 
-                   Style="{ThemeResource SubtitleTextBlockStyle}" 
-                   VerticalAlignment="Center" FontWeight="SemiBold"/>
-
-                        <TextBlock Text="{x:Bind ViewModel.NetAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                   Style="{ThemeResource TitleTextBlockStyle}" 
-                   Foreground="{ThemeResource SystemControlHighlightAccentBrush}" 
-                   HorizontalAlignment="Right"/>
-                    </Grid>
-
-                    -->
-        <!-- 5. Action Button -->
-        <!--
-                    <Button Content="Submit Purchase Receipt" 
-            Command="{x:Bind ViewModel.SaveReceiptCommand}" 
-            Style="{ThemeResource AccentButtonStyle}" 
-            HorizontalAlignment="Stretch" 
-            Height="48" 
-            Margin="0,12,0,0"
-            FontSize="16" FontWeight="SemiBold"/>
-                </StackPanel>
-
-
-                -->
-        <!--<StackPanel Grid.Column="1" Spacing="12">
-
-                    -->
-        <!-- 1. Gross Total -->
-        <!--
-                    <Grid>
-                        <TextBlock Text="Total Amount:" 
-                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
-                           VerticalAlignment="Center" FontSize="16"/>
-                        <TextBlock Text="{x:Bind ViewModel.TotalAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                           FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="16"/>
-                    </Grid>
-
-                    -->
-        <!-- Divider Line -->
-        <!--
-                    <MenuFlyoutSeparator Margin="0,4" />
-
-                    -->
-        <!-- 2. Net Payable Amount -->
-        <!--
-                    <Grid>
-                        <TextBlock Text="Net Payable:" 
-                           Style="{ThemeResource SubtitleTextBlockStyle}" 
-                           VerticalAlignment="Center" FontWeight="SemiBold"/>
-
-                        <TextBlock Text="{x:Bind ViewModel.NetAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" 
-                           Style="{ThemeResource TitleTextBlockStyle}" 
-                           Foreground="{ThemeResource SystemControlHighlightAccentBrush}" 
-                           HorizontalAlignment="Right"/>
-                    </Grid>
-
-                    -->
-        <!-- 3. Action Button -->
-        <!--
-                    <Button Content="Submit Purchase Receipt" 
-                    Command="{x:Bind ViewModel.SaveReceiptCommand}" 
-                    Style="{ThemeResource AccentButtonStyle}" 
-                    HorizontalAlignment="Stretch" 
-                    Height="48" 
-                    Margin="0,12,0,0"
-                    FontSize="16" FontWeight="SemiBold"/>
-                </StackPanel>-->
-        <!--
-            </Grid>
-        </Border>-->
     </Grid>
 </Page>
