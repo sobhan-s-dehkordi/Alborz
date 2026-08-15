@@ -18,8 +18,17 @@ public class InvoiceRepository : IInvoiceRepository
     {
         return await _context.Invoices
             .Include(i => i.Items)
-            .ThenInclude(item => item.Product)
+                .ThenInclude(item => item.Product)
             .Where(i => i.CustomerId == customerId)
             .ToListAsync();
+    }
+
+    public async Task<Invoice?> GetByIdWithDetailsAsync(int id)
+    {
+        return await _context.Invoices
+            .Include(i => i.Customer)
+            .Include(i => i.Items)
+                .ThenInclude(item => item.Product)
+            .FirstOrDefaultAsync(i => i.Id == id);
     }
 }

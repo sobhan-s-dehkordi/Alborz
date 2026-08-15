@@ -81,6 +81,8 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddTransient<PurchaseHistoryViewModel>();
         services.AddTransient<ProductsViewModel>();
         services.AddTransient<PartiesViewModel>();
+        services.AddTransient<SalesInvoiceViewModel>();
+        services.AddTransient<CustomersViewModel>();
 
         return services.BuildServiceProvider();
     }

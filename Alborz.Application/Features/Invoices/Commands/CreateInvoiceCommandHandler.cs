@@ -29,7 +29,11 @@ public class CreateInvoiceCommandHandler(
                 throw new KeyNotFoundException($"Product with ID {itemDto.ProductId} was not found.");
 
             product.DecreaseStock(itemDto.Quantity);
-            invoice.AddItem(product, itemDto.Quantity);
+            invoice.AddItem(
+            itemDto.ProductId, 
+            itemDto.Quantity, 
+            itemDto.UnitPrice, 
+            itemDto.DiscountAmount);
         }
 
         if (request.CustomerId.HasValue)

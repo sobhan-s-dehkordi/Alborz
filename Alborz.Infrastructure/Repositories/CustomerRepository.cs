@@ -15,16 +15,32 @@ public class CustomerRepository : ICustomerRepository
     public async Task<Customer> GetByIdAsync(int id) =>
         await _context.Customers.FindAsync(id);
 
-    public async Task<IEnumerable<Customer>> SearchAsync(string searchTerm)
+    public async Task<List<Customer>> SearchAsync(string? name, string? phone, string? nationalCode)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-            return await _context.Customers.ToListAsync();
+        var query = _context.Customers.AsNoTracking().AsQueryable();
 
-        return await _context.Customers
-            .Where(c => c.Name.Contains(searchTerm) || c.PhoneNumber.Contains(searchTerm))
-            .ToListAsync();
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            query = query.Where(c => c.Name.Contains(name));
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            query = query.Where(c => c.PhoneNumber.Contains(phone));
+        }
+
+        if (!string.IsNullOrWhiteSpace(nationalCode))
+        {
+            query = query.Where(c => c.NationalCode.Contains(nationalCode));
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task AddAsync(Customer customer) =>
         await _context.Customers.AddAsync(customer);
+
+    public void Update(Customer customer) =>
+        _context.Customers.Update(customer);
+    
 }

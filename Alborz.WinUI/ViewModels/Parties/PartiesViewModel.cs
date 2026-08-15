@@ -1,11 +1,12 @@
-﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Alborz.Application.Features.Parties.Commands;
+using Alborz.Application.Features.Parties.Queries;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
-using Alborz.Application.Features.Parties.Commands;
-using Alborz.Application.Features.Parties.Queries;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.Search;
 
 namespace ProjectName.WinUI.ViewModels;
 

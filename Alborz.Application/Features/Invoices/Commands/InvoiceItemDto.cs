@@ -1,3 +1,8 @@
 ﻿namespace Alborz.Application.Features.Invoices.Commands;
 
-public record InvoiceItemDto(int ProductId, int Quantity);
+public record InvoiceItemDto(
+    int ProductId,
+    int Quantity,
+    decimal UnitPrice,
+    decimal DiscountAmount // این فیلد اضافه شد
+);

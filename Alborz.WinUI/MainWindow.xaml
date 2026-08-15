@@ -38,7 +38,7 @@
                         <FontIcon Glyph="&#xE719;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Point of Sale" Tag="POSPage">
+                        <NavigationViewItem Content="Sale Invoice" Tag="SaleInvoicePage">
                         </NavigationViewItem>
                         <NavigationViewItem Content="Invoice Archive" Tag="InvoiceArchivePage"/>
                     </NavigationViewItem.MenuItems>
@@ -49,8 +49,8 @@
                         <FontIcon Glyph="&#xE716;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Register Customer" Tag="CustomerRegistrationPage">
-                        </NavigationViewItem>
+                        <NavigationViewItem Content="Customers" Tag="CustomersPage"/>
+                        <NavigationViewItem Content="Register Customer" Tag="CustomerRegistrationPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 

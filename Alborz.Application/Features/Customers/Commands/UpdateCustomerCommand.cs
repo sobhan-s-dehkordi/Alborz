@@ -2,8 +2,9 @@
 
 namespace Alborz.Application.Features.Customers.Commands;
 
-public record CreateCustomerCommand(
+public record UpdateCustomerCommand(
+    int Id,
     string Name,
     string PhoneNumber,
     string NationalCode
-    ) : IRequest<int>;
+    ) : IRequest;

@@ -21,6 +21,13 @@ public class Customer : BaseEntity
         LoyaltyPoints = 0;
     }
 
+    public void UpdateDetails(string name, string phoneNumber, string nationalCode)
+    {
+        Name = name;
+        PhoneNumber = phoneNumber;
+        NationalCode = nationalCode;
+    }
+
     public void AddLoyaltyPoints(decimal purchaseAmount)
     {
         var points = (int)(purchaseAmount / 100000);

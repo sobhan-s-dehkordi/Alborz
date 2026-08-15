@@ -21,28 +21,53 @@
 
 
         <Border Grid.Row="0" 
-                BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" 
-                BorderThickness="1" CornerRadius="8" Padding="16"
-                Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
-            <Grid ColumnSpacing="16" RowSpacing="12">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+        Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" 
+        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
+        BorderThickness="1" 
+        CornerRadius="8" 
+        Padding="16">
+
+            <Grid ColumnSpacing="16">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="120"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Row="0" Grid.Column="0" Header="Code (From)" Text="{x:Bind ViewModel.SearchCodeFrom, Mode=TwoWay}" TextChanging="NumericOnly_TextChanging"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Header="Code (To)" Text="{x:Bind ViewModel.SearchCodeTo, Mode=TwoWay}" TextChanging="NumericOnly_TextChanging"/>
-                <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Barcode" Text="{x:Bind ViewModel.SearchBarcode, Mode=TwoWay}" TextChanging="NumericOnly_TextChanging" HorizontalAlignment="Stretch"/>
-                <TextBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Product Name" Text="{x:Bind ViewModel.SearchName, Mode=TwoWay}" HorizontalAlignment="Stretch"/>
-                <Button Grid.Row="2" Grid.Column="2" Content="Search" 
-                        Command="{x:Bind ViewModel.LoadProductsCommand}" 
-                        Style="{ThemeResource AccentButtonStyle}" 
-                        VerticalAlignment="Bottom"/>
+
+                <TextBox Grid.Column="0" 
+                 Header="Product Name" 
+                 Text="{x:Bind ViewModel.SearchName, Mode=TwoWay}" 
+                 PlaceholderText="Search by name..."/>
+
+                <TextBox Grid.Column="1" 
+                 Header="Barcode" 
+                 Text="{x:Bind ViewModel.SearchBarcode, Mode=TwoWay}" 
+                 TextChanging="NumericOnly_TextChanging" 
+                 PlaceholderText="Scan or type..."/>
+
+                <TextBox Grid.Column="2" 
+                 Header="Code (From)" 
+                 Text="{x:Bind ViewModel.SearchCodeFrom, Mode=TwoWay}" 
+                 TextChanging="NumericOnly_TextChanging"
+                 PlaceholderText="Min"/>
+
+                <TextBox Grid.Column="3" 
+                 Header="Code (To)" 
+                 Text="{x:Bind ViewModel.SearchCodeTo, Mode=TwoWay}" 
+                 TextChanging="NumericOnly_TextChanging"
+                 PlaceholderText="Max"/>
+
+                <Button Grid.Column="4" 
+                Command="{x:Bind ViewModel.LoadProductsCommand}" 
+                Style="{ThemeResource AccentButtonStyle}" 
+                VerticalAlignment="Bottom"
+                Width="100">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="Search" Margin="0,0,0,2"/>
+                    </StackPanel>
+                </Button>
             </Grid>
         </Border>
 
