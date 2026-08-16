@@ -5,5 +5,7 @@ public record SalesInvoiceItemDetailDto(
     string ProductName,
     int Quantity,
     decimal UnitPrice,
-    decimal DiscountAmount
-);
+    decimal DiscountAmount)
+{
+    public decimal TotalPrice => (Quantity * UnitPrice) - DiscountAmount;
+}

@@ -82,4 +82,10 @@ public class Invoice : BaseEntity
     {
         TotalAmount = _items.Sum(i => i.TotalPrice);
     }
+
+    public void ClearItems()
+    {
+        _items.Clear();
+        CalculateTotal();
+    }
 }

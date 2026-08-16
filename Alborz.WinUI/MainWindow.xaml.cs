@@ -86,6 +86,7 @@ public sealed partial class MainWindow : Window
             "PartiesPage" => typeof(Views.Parties.PartiesPage),
             "PurchaseHistoryPage" => typeof(Views.PurchaseReceipts.PurchaseHistoryPage),
             "SaleInvoicePage" => typeof(Views.SalesInvoices.SaleInvoicePage),
+            "InvoiceArchivePage" => typeof(Views.SalesInvoices.SalesHistoryPage),
             "CustomersPage" => typeof(Views.Customers.CustomersPage)
 
         };

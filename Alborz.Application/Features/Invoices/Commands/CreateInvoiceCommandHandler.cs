@@ -20,7 +20,12 @@ public class CreateInvoiceCommandHandler(
         if (!request.Items.Any())
             throw new ArgumentException("The invoice must contain at least one item.");
 
-        var invoice = new Invoice(request.CustomerId, request.PaymentMethod);
+        var invoice = new Invoice(
+            request.CustomerId,
+            request.PaymentMethod,
+            request.Remarks,
+            request.AdditionalCharges
+        );
 
         foreach (var itemDto in request.Items)
         {
@@ -43,6 +48,11 @@ public class CreateInvoiceCommandHandler(
             {
                 customer.AddLoyaltyPoints(invoice.FinalAmount);
             }
+        }
+
+        if (request.GlobalDiscount > 0)
+        {
+            invoice.ApplyGlobalDiscount(request.GlobalDiscount);
         }
 
         await _invoiceRepository.AddAsync(invoice);

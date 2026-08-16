@@ -34,6 +34,15 @@ public class Customer : BaseEntity
         LoyaltyPoints += points;
     }
 
+    public void DecreaseLoyaltyPoints(decimal invoiceAmount)
+    {
+        int pointsToRemove = (int)(invoiceAmount / 100000);
+
+        LoyaltyPoints -= pointsToRemove;
+
+        if (LoyaltyPoints < 0) LoyaltyPoints = 0;
+    }
+
     public void UseLoyaltyPoints(int pointsToUse)
     {
         if (LoyaltyPoints < pointsToUse)

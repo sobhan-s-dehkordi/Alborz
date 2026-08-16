@@ -14,6 +14,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="ViewModels\SalesInvoices\SalesHistoryPage.xaml" />
     <None Remove="Views\Customers\CustomerDialog.xaml" />
     <None Remove="Views\Customers\CustomersPage.xaml" />
     <None Remove="Views\PartiesPage.xaml" />
@@ -23,6 +24,7 @@
     <None Remove="Views\PurchaseReceiptPage.xaml" />
     <None Remove="Views\PurchaseReceipts\PurchaseHistoryPage.xaml" />
     <None Remove="Views\PurchaseReceipts\ReceiptDetailsDialog.xaml" />
+    <None Remove="Views\SalesInvoices\InvoiceDetailsDialog.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -89,6 +91,16 @@
   <ItemGroup>
     <Folder Include="Views\Products\" />
     <Folder Include="Views\Parties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\SalesInvoices\InvoiceDetailsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="ViewModels\SalesInvoices\SalesHistoryPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\Customers\CustomersPage.xaml">

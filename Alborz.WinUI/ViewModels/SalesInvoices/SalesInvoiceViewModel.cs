@@ -2,10 +2,8 @@
 using Alborz.Application.Features.Customers.Queries;
 using Alborz.Application.Features.Invoices.Commands;
 using Alborz.Application.Features.Invoices.Queries;
-using Alborz.Application.Features.Products.Commands;
 using Alborz.Application.Features.Products.Queries;
 using Alborz.Domain.Enums;
-using Alborz.WinUI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
@@ -15,7 +13,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels;
 
 public partial class SalesInvoiceViewModel : ObservableObject
 {
@@ -238,9 +236,9 @@ public partial class SalesInvoiceViewModel : ObservableObject
         ErrorMessage = string.Empty;
 
         if (!int.TryParse(InputDiscountPercentage, out int discountPercent)) discountPercent = 0;
-        if (discountPercent < 0 || discountPercent > 100)
+        if (discountPercent < 0 || discountPercent > 100 || discountPercent % 5 != 0)
         {
-            ErrorMessage = "Discount must be between 0 and 100.";
+            ErrorMessage = "Discount must be a multiple of 5 (e.g., 0, 5, 10, 15) and between 0 and 100.";
             return;
         }
 
@@ -287,6 +285,8 @@ public partial class SalesInvoiceViewModel : ObservableObject
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
+        decimal globalDiscount = decimal.TryParse(TotalDiscount.Replace(",", ""), out var d) ? d : 0;
+
         var itemsDto = InvoiceItems.Select(i => new InvoiceItemDto(
             i.ProductId,
             i.Quantity,
@@ -294,31 +294,66 @@ public partial class SalesInvoiceViewModel : ObservableObject
             i.DiscountAmount
         )).ToList();
 
-        var command = new CreateInvoiceCommand(
-            SelectedCustomer?.Id,
-            SelectedPaymentMethod,
-            itemsDto
-        );
-
-        int newInvoiceId = await mediator.Send(command);
-
-        if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
+        if (_editingInvoiceId.HasValue)
         {
-            var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
-            {
-                Title = "Success",
-                Content = $"Sales invoice #{newInvoiceId} has been saved successfully.",
-                CloseButtonText = "OK",
-                XamlRoot = app.AppWindow.Content.XamlRoot
-            };
-            await dialog.ShowAsync();
-        }
+            var command = new UpdateInvoiceCommand(
+                _editingInvoiceId.Value,
+                SelectedCustomer?.Id,
+                SelectedPaymentMethod,
+                globalDiscount,
+                AdditionalChargesValue,
+                Remarks,
+                itemsDto
+            );
 
-        InvoiceItems.Clear();
-        SelectedCustomer = null;
-        SearchCustomerText = string.Empty;
-        TotalDiscount = "0";
-        AdditionalCharges = "0";
-        Remarks = string.Empty;
+            await mediator.Send(command);
+
+            if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
+            {
+                var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                {
+                    Title = "Success",
+                    Content = $"Sales invoice #{_editingInvoiceId.Value} has been updated successfully.",
+                    CloseButtonText = "OK",
+                    XamlRoot = app.AppWindow.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+
+                string uniqueTag = $"SalesInvoice_Edit_{_editingInvoiceId.Value}";
+                app.AppWindow.CloseTab(uniqueTag);
+            }
+        }
+        else
+        {
+            var command = new CreateInvoiceCommand(
+                SelectedCustomer?.Id,
+                SelectedPaymentMethod,
+                globalDiscount,
+                AdditionalChargesValue,
+                Remarks,
+                itemsDto
+            );
+
+            int newInvoiceId = await mediator.Send(command);
+
+            if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
+            {
+                var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+                {
+                    Title = "Success",
+                    Content = $"Sales invoice #{newInvoiceId} has been saved successfully.",
+                    CloseButtonText = "OK",
+                    XamlRoot = app.AppWindow.Content.XamlRoot
+                };
+                await dialog.ShowAsync();
+            }
+
+            InvoiceItems.Clear();
+            SelectedCustomer = null;
+            SearchCustomerText = string.Empty;
+            TotalDiscount = "0";
+            AdditionalCharges = "0";
+            Remarks = string.Empty;
+        }
     }
 }

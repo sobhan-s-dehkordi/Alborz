@@ -31,4 +31,42 @@ public class InvoiceRepository : IInvoiceRepository
                 .ThenInclude(item => item.Product)
             .FirstOrDefaultAsync(i => i.Id == id);
     }
+
+    public async Task<List<Invoice>> GetFilteredInvoicesAsync(int? customerId, DateTime? fromDate, DateTime? toDate, int? invoiceId)
+    {
+        var query = _context.Invoices
+            .Include(i => i.Customer)
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (invoiceId.HasValue)
+        {
+            query = query.Where(i => i.Id == invoiceId.Value);
+        }
+        else
+        {
+            if (customerId.HasValue)
+            {
+                query = query.Where(i => i.CustomerId == customerId.Value);
+            }
+
+            if (fromDate.HasValue)
+            {
+                query = query.Where(i => i.InvoiceDate >= fromDate.Value.Date);
+            }
+
+            if (toDate.HasValue)
+            {
+                var endDate = toDate.Value.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(i => i.InvoiceDate <= endDate);
+            }
+        }
+
+        return await query.OrderByDescending(i => i.InvoiceDate).ToListAsync();
+    }
+
+    public void Update(Invoice invoice)
+    {
+        _context.Invoices.Update(invoice);
+    }
 }

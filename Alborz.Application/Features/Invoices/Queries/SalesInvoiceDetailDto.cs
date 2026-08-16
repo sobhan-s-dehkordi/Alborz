@@ -12,5 +12,8 @@ public record SalesInvoiceDetailDto(
     string Remarks,
     decimal GlobalDiscount,
     decimal AdditionalCharges,
-    List<SalesInvoiceItemDetailDto> Items
-);
+    List<SalesInvoiceItemDetailDto> Items)
+{
+    public decimal TotalAmount => Items?.Sum(x => x.TotalPrice) ?? 0;
+    public decimal NetAmount => TotalAmount - GlobalDiscount + AdditionalCharges;
+};

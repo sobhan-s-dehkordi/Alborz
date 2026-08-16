@@ -1,9 +1,9 @@
 using Alborz.Application.Features.Customers.Queries;
 using Alborz.Application.Features.Products.Queries;
+using Alborz.WinUI.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using ProjectName.WinUI.ViewModels;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 

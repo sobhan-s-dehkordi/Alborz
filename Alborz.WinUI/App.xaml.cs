@@ -3,9 +3,9 @@ using Alborz.Application.Features.Products.Commands;
 using Alborz.Infrastructure.Data;
 using Alborz.Infrastructure.Repositories;
 using Alborz.Infrastructure.Services;
+using Alborz.WinUI.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
 using ProjectName.WinUI.ViewModels;
 using System;
 using System.IO;
@@ -82,6 +82,7 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddTransient<ProductsViewModel>();
         services.AddTransient<PartiesViewModel>();
         services.AddTransient<SalesInvoiceViewModel>();
+        services.AddTransient<SalesHistoryViewModel>();
         services.AddTransient<CustomersViewModel>();
 
         return services.BuildServiceProvider();

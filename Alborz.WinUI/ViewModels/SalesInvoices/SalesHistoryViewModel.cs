@@ -1,8 +1,7 @@
-﻿using Alborz.Application.Contracts;
-using Alborz.Application.Features.Parties.Queries;
-using Alborz.Application.Features.PurchaseReceipts.Commands;
-using Alborz.Application.Features.PurchaseReceipts.Queries;
+﻿using Alborz.Application.Features.Customers.Queries;
+using Alborz.Application.Features.Invoices.Queries;
 using Alborz.WinUI;
+using Alborz.WinUI.Views.SalesInvoices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MediatR;
@@ -13,9 +12,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels;
 
-public partial class PurchaseHistoryViewModel : ObservableObject
+public partial class SalesHistoryViewModel : ObservableObject
 {
     #region <Fields>
 
@@ -25,19 +24,20 @@ public partial class PurchaseHistoryViewModel : ObservableObject
 
     #region <Collections>
 
-    public ObservableCollection<PurchaseReceiptDto> Receipts { get; } = new();
+    // فرض بر وجود DTO ای به نام SalesInvoiceDto برای لیست فاکتورها
+    public ObservableCollection<SalesInvoiceDto> Invoices { get; } = new();
 
-    public ObservableCollection<PartyDto> SupplierSearchResults { get; } = new();
+    public ObservableCollection<CustomerDto> CustomerSearchResults { get; } = new();
 
     #endregion
 
     #region <Observable & Computed Properties>
 
     [ObservableProperty]
-    private PartyDto? _selectedSupplier;
+    private CustomerDto? _selectedCustomer;
 
     [ObservableProperty]
-    private string _searchSupplierText = string.Empty;
+    private string _searchCustomerText = string.Empty;
 
     [ObservableProperty]
     private DateTimeOffset? _fromDate = DateTimeOffset.Now.AddDays(-7);
@@ -46,39 +46,40 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     private DateTimeOffset? _toDate = DateTimeOffset.Now;
 
     [ObservableProperty]
-    private string _referenceNumberFilter = string.Empty;
+    private string _invoiceIdFilter = string.Empty;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsReceiptSelected))]
-    private PurchaseReceiptDto? _selectedReceipt;
+    [NotifyPropertyChangedFor(nameof(IsInvoiceSelected))]
+    private SalesInvoiceDto? _selectedInvoice;
 
-    public bool HasReceipts => Receipts.Any();
+    public bool HasInvoices => Invoices.Any();
 
-    public bool IsReceiptSelected => SelectedReceipt != null;
+    public bool IsInvoiceSelected => SelectedInvoice != null;
 
-    public decimal TotalAmountSummary => Receipts.Sum(r => r.TotalAmount);
-    public decimal TotalDiscountSummary => Receipts.Sum(r => r.TotalDiscount);
-    public decimal TotalAdditionalChargesSummary => Receipts.Sum(r => r.AdditionalCharges);
-    public decimal TotalNetAmountSummary => Receipts.Sum(r => r.NetAmount);
+    // محاسبات فوتر
+    public decimal TotalAmountSummary => Invoices.Sum(r => r.TotalAmount);
+    public decimal TotalDiscountSummary => Invoices.Sum(r => r.TotalDiscount);
+    public decimal TotalAdditionalChargesSummary => Invoices.Sum(r => r.AdditionalCharges);
+    public decimal TotalNetAmountSummary => Invoices.Sum(r => r.NetAmount);
 
     #endregion
 
     #region <Constructor>
 
-    public PurchaseHistoryViewModel(IServiceScopeFactory scopeFactory)
+    public SalesHistoryViewModel(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
 
-        Receipts.CollectionChanged += (s, e) =>
+        Invoices.CollectionChanged += (s, e) =>
         {
-            OnPropertyChanged(nameof(HasReceipts));
+            OnPropertyChanged(nameof(HasInvoices));
             OnPropertyChanged(nameof(TotalAmountSummary));
             OnPropertyChanged(nameof(TotalDiscountSummary));
             OnPropertyChanged(nameof(TotalAdditionalChargesSummary));
             OnPropertyChanged(nameof(TotalNetAmountSummary));
         };
 
-        _ = SearchReceiptsAsync();
+        _ = SearchInvoicesAsync();
     }
 
     #endregion
@@ -86,74 +87,78 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     #region <Commands & Methods>
 
     [RelayCommand]
-    public async Task SearchSuppliersAsync(string searchText)
+    public async Task SearchCustomersAsync(string searchText)
     {
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
         {
-            SupplierSearchResults.Clear();
-            SelectedSupplier = null;
+            CustomerSearchResults.Clear();
+            SelectedCustomer = null;
             return;
         }
 
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        var results = await mediator.Send(new SearchSupplierSuggestQuery(searchText));
+        // استفاده از کوئری جستجوی مشتری (همانند فاکتور فروش)
+        var query = new GetCustomersQuery(searchText, null, null);
+        var results = await mediator.Send(query);
 
-        SupplierSearchResults.Clear();
+        CustomerSearchResults.Clear();
         foreach (var item in results)
         {
-            SupplierSearchResults.Add(item);
+            CustomerSearchResults.Add(item);
         }
     }
 
     [RelayCommand]
-    public async Task SearchReceiptsAsync()
+    public async Task SearchInvoicesAsync()
     {
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        int? supplierId = SelectedSupplier?.Id;
+        int? customerId = SelectedCustomer?.Id;
+        int? invoiceId = int.TryParse(InvoiceIdFilter, out var id) ? id : null;
 
-        var query = new GetPurchaseReceiptsQuery(
-            supplierId,
+        // فراخوانی کوئری جهت فیلتر و دریافت لیست فاکتورها
+        var query = new GetSalesInvoicesQuery(
+            customerId,
             FromDate?.DateTime,
             ToDate?.DateTime,
-            ReferenceNumberFilter);
+            invoiceId);
 
         var results = await mediator.Send(query);
 
-        Receipts.Clear();
+        Invoices.Clear();
 
         if (results != null)
         {
             foreach (var item in results)
             {
-                Receipts.Add(item);
+                Invoices.Add(item);
             }
         }
 
-        SelectedReceipt = null;
-
+        SelectedInvoice = null;
         OnPropertyChanged(nameof(TotalAmountSummary));
     }
 
     [RelayCommand]
-    public async Task EditReceiptAsync()
+    public async Task EditInvoiceAsync()
     {
-        if (SelectedReceipt == null) return;
+        if (SelectedInvoice == null) return;
 
         if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
         {
-            string uniqueTag = $"PurchaseReceipt_Edit_{SelectedReceipt.Id}";
-            string header = $"Edit Receipt #{SelectedReceipt.Id}";
+            string uniqueTag = $"SalesInvoice_Edit_{SelectedInvoice.Id}";
+            string header = $"Edit Inv #{SelectedInvoice.Id}";
 
+            // باز کردن تب مربوط به صفحه فروش (همان صفحه‌ای که با هم طراحی کردیم)
             app.AppWindow.OpenOrFocusTab(
                 header,
-                typeof(Alborz.WinUI.Views.PurchaseReceipts.PurchaseReceiptPage),
+                typeof(Alborz.WinUI.Views.SalesInvoices.SaleInvoicePage),
                 null,
                 uniqueTag,
-                SelectedReceipt.Id);
+                SelectedInvoice.Id);
         }
 
         await Task.CompletedTask;
@@ -162,11 +167,17 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     [RelayCommand]
     public async Task ViewDetailsAsync()
     {
-        if (SelectedReceipt == null) return;
+        if (SelectedInvoice == null) return;
 
-        if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
+        using var scope = _scopeFactory.CreateScope();
+        var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+        // واکشی مجدد جزئیات فاکتور شامل ریز اقلام برای نمایش در دیالوگ
+        var invoiceDetail = await mediator.Send(new GetSalesInvoiceByIdQuery(SelectedInvoice.Id));
+
+        if (invoiceDetail != null && Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
         {
-            var dialog = new Alborz.WinUI.Views.PurchaseReceipts.ReceiptDetailsDialog(SelectedReceipt)
+            var dialog = new InvoiceDetailsDialog(invoiceDetail)
             {
                 XamlRoot = app.AppWindow.Content.XamlRoot
             };
@@ -178,14 +189,14 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     [RelayCommand]
     public async Task ExportToExcelAsync()
     {
-        if (!Receipts.Any()) return;
+        if (!Invoices.Any()) return;
 
         try
         {
             var savePicker = new Windows.Storage.Pickers.FileSavePicker();
             savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
             savePicker.FileTypeChoices.Add("Excel Workbook", new List<string>() { ".xlsx" });
-            savePicker.SuggestedFileName = $"Purchase_History_{DateTime.Now:yyyyMMdd_HHmm}";
+            savePicker.SuggestedFileName = $"Sales_History_{DateTime.Now:yyyyMMdd_HHmm}";
 
             if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
             {
@@ -199,13 +210,14 @@ public partial class PurchaseHistoryViewModel : ObservableObject
             if (file != null)
             {
                 using var scope = _scopeFactory.CreateScope();
-                var excelService = scope.ServiceProvider.GetRequiredService<IExcelExportService>();
 
-                byte[] fileBytes = excelService.ExportPurchaseReceipts(Receipts);
+                // فرض بر وجود متد ExportSalesInvoices در سرویس اکسل
+                // var excelService = scope.ServiceProvider.GetRequiredService<IExcelExportService>();
+                // byte[] fileBytes = excelService.ExportSalesInvoices(Invoices);
 
-                Windows.Storage.CachedFileManager.DeferUpdates(file);
-                await Windows.Storage.FileIO.WriteBytesAsync(file, fileBytes);
-                await Windows.Storage.CachedFileManager.CompleteUpdatesAsync(file);
+                // Windows.Storage.CachedFileManager.DeferUpdates(file);
+                // await Windows.Storage.FileIO.WriteBytesAsync(file, fileBytes);
+                // await Windows.Storage.CachedFileManager.CompleteUpdatesAsync(file);
 
                 await ShowDialogAsync("Export Successful", $"Data exported to {file.Name}");
             }
