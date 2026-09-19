@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Contracts;
+using Alborz.Application.Contracts;
 using Alborz.Domain.Entities;
 using Alborz.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +30,7 @@ public class ProductRepository : IProductRepository
         return await query.ToListAsync();
     }
 
-    public async Task<Product> GetByIdAsync(int id) => await _context.Products.FindAsync(id);
+    public async Task<Product?> GetByIdAsync(int id) => await _context.Products.FindAsync(id);
 
     public async Task AddAsync(Product product) => await _context.Products.AddAsync(product);
 
@@ -57,3 +57,4 @@ public class ProductRepository : IProductRepository
             .ToListAsync();
     }
 }
+

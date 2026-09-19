@@ -1,5 +1,5 @@
 <Page
-    x:Class="Alborz.WinUI.Views.Products.ProductsPage"
+ FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}"    x:Class="Alborz.WinUI.Views.Products.ProductsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
@@ -12,7 +12,10 @@
     </Page.Resources>
 
 
-    <Grid Padding="20" RowSpacing="16">
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}" Severity="Error" IsClosable="False" Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"/>
+        <Grid Grid.Row="1" Padding="20" RowSpacing="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -36,43 +39,43 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" 
+                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="0" 
                  Header="Product Name" 
                  Text="{x:Bind ViewModel.SearchName, Mode=TwoWay}" 
                  PlaceholderText="Search by name..."/>
 
-                <TextBox Grid.Column="1" 
+                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="1" 
                  Header="Barcode" 
                  Text="{x:Bind ViewModel.SearchBarcode, Mode=TwoWay}" 
                  TextChanging="NumericOnly_TextChanging" 
                  PlaceholderText="Scan or type..."/>
 
-                <TextBox Grid.Column="2" 
+                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="2" 
                  Header="Code (From)" 
                  Text="{x:Bind ViewModel.SearchCodeFrom, Mode=TwoWay}" 
                  TextChanging="NumericOnly_TextChanging"
                  PlaceholderText="Min"/>
 
-                <TextBox Grid.Column="3" 
+                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="3" 
                  Header="Code (To)" 
                  Text="{x:Bind ViewModel.SearchCodeTo, Mode=TwoWay}" 
                  TextChanging="NumericOnly_TextChanging"
                  PlaceholderText="Max"/>
 
-                <Button Grid.Column="4" 
+                <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="4" 
                 Command="{x:Bind ViewModel.LoadProductsCommand}" 
                 Style="{ThemeResource AccentButtonStyle}" 
                 VerticalAlignment="Bottom"
                 Width="100">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <TextBlock Text="Search" Margin="0,0,0,2"/>
+                        <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="Search" Margin="0,0,0,2"/>
                     </StackPanel>
                 </Button>
             </Grid>
         </Border>
 
         <Border Grid.Row="1" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
-            <controls:DataGrid x:Name="ProductsDataGrid"
+            <controls:DataGrid FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="ProductsDataGrid"
                                ItemsSource="{x:Bind ViewModel.Products, Mode=OneWay}" 
                                SelectedItem="{x:Bind ViewModel.SelectedProduct, Mode=TwoWay}"
                                AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
@@ -90,8 +93,10 @@
 
         
         <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
-            <Button Content="Edit Selected" Click="EditProduct_Click" IsEnabled="{x:Bind ViewModel.IsProductSelected, Mode=OneWay}" Width="120"/>
-            <Button Content="Create New" Click="CreateProduct_Click" Style="{ThemeResource AccentButtonStyle}" Width="120"/>
+            <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Edit Selected" Click="EditProduct_Click" IsEnabled="{x:Bind ViewModel.IsProductSelected, Mode=OneWay}" Width="120"/>
+            <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Create New" Click="CreateProduct_Click" Style="{ThemeResource AccentButtonStyle}" Width="120"/>
         </StackPanel>
     </Grid>
+    </Grid>
 </Page>
+

@@ -1,4 +1,4 @@
-﻿using Alborz.Domain.Common;
+using Alborz.Domain.Common;
 
 namespace Alborz.Domain.Entities;
 
@@ -8,6 +8,7 @@ public class InvoiceItem : BaseEntity
 
     public InvoiceItem(int productId, int quantity, decimal unitPrice, decimal discountAmount = 0)
     {
+        Guard.Line(productId, quantity, unitPrice, discountAmount);
         ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
@@ -24,3 +25,5 @@ public class InvoiceItem : BaseEntity
 
     public Product? Product { get; private set; }
 }
+
+

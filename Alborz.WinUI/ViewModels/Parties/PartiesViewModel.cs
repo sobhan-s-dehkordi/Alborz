@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Features.Parties.Commands;
+using Alborz.Application.Features.Parties.Commands;
 using Alborz.Application.Features.Parties.Queries;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,9 +8,9 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Search;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.Parties;
 
-public partial class PartiesViewModel : ObservableObject
+public partial class PartiesViewModel : Alborz.WinUI.ViewModels.Common.ViewModelBase
 {
 
     #region <Fields>
@@ -28,13 +28,13 @@ public partial class PartiesViewModel : ObservableObject
     #region <Observable Properties>
 
     [ObservableProperty]
-    private string _searchName = string.Empty;
+    public partial string SearchName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _searchPhone = string.Empty;
+    public partial string SearchPhone { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private PartyDto? _selectedParty;
+    public partial PartyDto? SelectedParty { get; set; }
 
     #endregion
 
@@ -53,6 +53,9 @@ public partial class PartiesViewModel : ObservableObject
     [RelayCommand]
     public async Task LoadPartiesAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
@@ -63,27 +66,45 @@ public partial class PartiesViewModel : ObservableObject
         {
             Parties.Add(party);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     public async Task AddPartyAsync(string name, string phone, bool isSupplier, bool isCustomer)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         using var scope = _scopeFactory.CreateScope();
 
         await scope.ServiceProvider.GetRequiredService<IMediator>()
             .Send(new CreatePartyCommand(name, phone, isSupplier, isCustomer));
 
         await LoadPartiesAsync();
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     public async Task UpdatePartyAsync(int id, string name, string phone, bool isSupplier, bool isCustomer)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         using var scope = _scopeFactory.CreateScope();
 
         await scope.ServiceProvider.GetRequiredService<IMediator>()
             .Send(new UpdatePartyCommand(id, name, phone, isSupplier, isCustomer));
 
         await LoadPartiesAsync();
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     #endregion
 }
+
+
+

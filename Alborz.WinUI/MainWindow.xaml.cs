@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using Microsoft.UI.Xaml;
@@ -19,7 +20,14 @@ public sealed partial class MainWindow : Window
 
     #region <Methods>
 
-    public void OpenOrFocusTab(string header, Type pageType, IconElement menuIcon, string uniqueTag, object parameter = null)
+    public void SetDatabaseReady(bool ready, string message)
+    {
+        DatabaseNotice.Message = message;
+        DatabaseNotice.IsOpen = !ready;
+        foreach (var item in MainNav.MenuItems.OfType<NavigationViewItem>()) item.IsEnabled = ready;
+    }
+
+    public void OpenOrFocusTab(string header, Type pageType, IconElement? menuIcon, string uniqueTag, object? parameter = null)
     {
         var existingTab = MainTabView.TabItems
             .OfType<TabViewItem>()
@@ -47,6 +55,7 @@ public sealed partial class MainWindow : Window
             newTab.IconSource = new FontIconSource { Glyph = fontIcon.Glyph };
         }
 
+        ((App)Microsoft.UI.Xaml.Application.Current).Services.GetRequiredService<Alborz.WinUI.Services.AppearanceService>().ApplyTo(newTab);
         MainTabView.TabItems.Add(newTab);
         MainTabView.SelectedItem = newTab;
     }
@@ -76,10 +85,10 @@ public sealed partial class MainWindow : Window
             return;
         }
 
-        string pageTag = item.Tag.ToString();
-        string header = item.Content.ToString();
+        string pageTag = item.Tag.ToString() ?? string.Empty;
+        string header = item.Content?.ToString() ?? pageTag;
 
-        Type pageType = pageTag switch
+        Type? pageType = pageTag switch
         {
             "ProductsPage" => typeof(Views.Products.ProductsPage),
             "PurchaseReceiptPage" => typeof(Views.PurchaseReceipts.PurchaseReceiptPage),
@@ -87,13 +96,17 @@ public sealed partial class MainWindow : Window
             "PurchaseHistoryPage" => typeof(Views.PurchaseReceipts.PurchaseHistoryPage),
             "SaleInvoicePage" => typeof(Views.SalesInvoices.SaleInvoicePage),
             "InvoiceArchivePage" => typeof(Views.SalesInvoices.SalesHistoryPage),
-            "CustomersPage" => typeof(Views.Customers.CustomersPage)
+            "CustomersPage" => typeof(Views.Customers.CustomersPage),
+            "CustomerRegistrationPage" => typeof(Views.Customers.CustomersPage),
+            "KardexPage" or "TopProductsPage" or "TopCustomersPage" => typeof(Views.Reports.ReportsPage),
+            "SettingsPage" => typeof(Views.Settings.SettingsPage),
+            _ => null
 
         };
 
         if (pageType != null)
         {
-            OpenOrFocusTab(header, pageType, item.Icon, pageTag);
+            OpenOrFocusTab(header, pageType, item.Icon, pageTag, pageTag);
         }
     }
 
@@ -104,3 +117,6 @@ public sealed partial class MainWindow : Window
 
     #endregion
 }
+
+
+

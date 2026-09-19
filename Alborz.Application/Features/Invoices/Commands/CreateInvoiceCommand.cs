@@ -1,4 +1,4 @@
-﻿using Alborz.Domain.Enums;
+using Alborz.Domain.Enums;
 using MediatR;
 
 namespace Alborz.Application.Features.Invoices.Commands;
@@ -9,4 +9,5 @@ public record CreateInvoiceCommand(
     decimal GlobalDiscount,
     decimal AdditionalCharges,
     string Remarks,
-    List<InvoiceItemDto> Items) : IRequest<int>;
+    List<InvoiceItemDto> Items, DateTime? InvoiceDate = null) : IRequest<int>;
+

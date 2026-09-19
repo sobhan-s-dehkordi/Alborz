@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Features.Parties.Queries;
+using Alborz.Application.Features.Parties.Queries;
 using Alborz.Application.Features.Products.Queries;
 using Alborz.Application.Features.PurchaseReceipts.Commands;
 using Alborz.Application.Features.PurchaseReceipts.Queries;
@@ -12,9 +12,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.PurchaseReceipts;
 
-public partial class PurchaseReceiptViewModel : ObservableObject
+public partial class PurchaseReceiptViewModel : Alborz.WinUI.ViewModels.Common.ViewModelBase
 {
 
     #region <Fields>
@@ -37,53 +37,49 @@ public partial class PurchaseReceiptViewModel : ObservableObject
     #region <Observable & Computed Properties>
 
     [ObservableProperty]
-    private string _submitButtonText = "Submit Purchase Receipt";
+    public partial string SubmitButtonText { get; set; } = "Submit Purchase Receipt";
 
     [ObservableProperty]
-    private PartyDto? _selectedSupplier;
+    public partial PartyDto? SelectedSupplier { get; set; }
 
     [ObservableProperty]
-    private string _searchSupplierText = string.Empty;
+    public partial string SearchSupplierText { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _searchProductText = string.Empty;
+    public partial string SearchProductText { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private DateTimeOffset _receiptDate = DateTimeOffset.Now;
+    public partial DateTimeOffset ReceiptDate { get; set; } = DateTimeOffset.Now;
 
     [ObservableProperty]
-    private string _referenceNumber = string.Empty;
+    public partial string ReferenceNumber { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _remarks = string.Empty;
+    public partial string Remarks { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private int _inputQuantity = 1;
+    public partial int InputQuantity { get; set; } = 1;
 
     [ObservableProperty]
-    private string _inputPrice = "0";
+    public partial string InputPrice { get; set; } = "0";
 
     [ObservableProperty]
-    private string _inputItemDiscount = "0";
+    public partial string InputItemDiscount { get; set; } = "0";
 
     [ObservableProperty]
-    private string _inputDiscountPercentage = "0";
+    public partial string InputDiscountPercentage { get; set; } = "0";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(NetAmount))]
     [NotifyPropertyChangedFor(nameof(OverallTotalDiscount))]
-    private string _totalDiscount = "0";
+    public partial string TotalDiscount { get; set; } = "0";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(NetAmount))]
     [NotifyPropertyChangedFor(nameof(AdditionalChargesValue))]
-    private string _additionalCharges = "0";
+    public partial string AdditionalCharges { get; set; } = "0";
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasError))]
-    private string _errorMessage = string.Empty;
 
-    public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
 
     public decimal AdditionalChargesValue => decimal.TryParse(AdditionalCharges.Replace(",", ""), out var ac) ? ac : 0;
 
@@ -118,7 +114,12 @@ public partial class PurchaseReceiptViewModel : ObservableObject
         _scopeFactory = scopeFactory;
 
         ReceiptItems.CollectionChanged += (s, e) =>
-        {
+        {            if (e.OldItems != null)
+                foreach (System.ComponentModel.INotifyPropertyChanged item in e.OldItems)
+                    item.PropertyChanged -= OnLineChanged;
+            if (e.NewItems != null)
+                foreach (System.ComponentModel.INotifyPropertyChanged item in e.NewItems)
+                    item.PropertyChanged += OnLineChanged;
             OnPropertyChanged(nameof(TotalAmount));
             OnPropertyChanged(nameof(NetAmount));
             OnPropertyChanged(nameof(TotalLineDiscounts));
@@ -133,6 +134,9 @@ public partial class PurchaseReceiptViewModel : ObservableObject
     [RelayCommand]
     public async Task SearchSuppliersAsync(string searchText)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
         {
             SupplierSearchResults.Clear();
@@ -150,11 +154,17 @@ public partial class PurchaseReceiptViewModel : ObservableObject
         {
             SupplierSearchResults.Add(item);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task SearchProductsAsync(string searchText)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
         {
             ProductSearchResults.Clear();
@@ -171,9 +181,12 @@ public partial class PurchaseReceiptViewModel : ObservableObject
         {
             ProductSearchResults.Add(item);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
-    public void SelectProduct(ProductDto product)
+    public void SelectProduct(ProductDto? product)
     {
         _selectedProductFromSearch = product;
         if (product is not null)
@@ -190,24 +203,19 @@ public partial class PurchaseReceiptViewModel : ObservableObject
     {
         ErrorMessage = string.Empty;
 
-        if (!int.TryParse(InputDiscountPercentage, out int discountPercent))
+        if (!decimal.TryParse(InputDiscountPercentage, out var discountPercent) || discountPercent < 0 || discountPercent > 100)
         {
-            discountPercent = 0;
-        }
-
-        if (discountPercent < 0 || discountPercent > 100 || discountPercent % 5 != 0)
-        {
-            ErrorMessage = "Discount must be a multiple of 5 (e.g., 0, 5, 10, 15) and between 0 and 100.";
+            ErrorMessage = "Discount must be between 0 and 100 percent.";
             return;
         }
+        if (_selectedProductFromSearch == null) { ErrorMessage = "Select a product."; return; }
+        if (ReceiptItems.Any(i => i.ProductId == _selectedProductFromSearch.Id)) { ErrorMessage = "This product is already in the document. Edit its existing row."; return; }
 
-        if (_selectedProductFromSearch == null) return;
-
-        if (InputQuantity <= 0) return;
-        if (!decimal.TryParse(InputPrice.Replace(",", ""), out decimal price)) return;
+        if (InputQuantity <= 0) { ErrorMessage = "Quantity must be positive."; return; }
+        if (!decimal.TryParse(InputPrice.Replace(",", ""), out decimal price) || price < 0 || price > 9999999999999999.99m / InputQuantity) { ErrorMessage = "Enter a valid non-negative price."; return; }
 
         decimal totalLinePrice = price * InputQuantity;
-        decimal calculatedDiscountAmount = totalLinePrice * (decimal)(Convert.ToInt32(InputDiscountPercentage) / 100.0);
+        decimal calculatedDiscountAmount = decimal.Round(totalLinePrice * discountPercent / 100m, 2);
 
         var newItem = new ReceiptItemUIModel
         {
@@ -247,7 +255,10 @@ public partial class PurchaseReceiptViewModel : ObservableObject
     [RelayCommand]
     public async Task SaveReceiptAsync()
     {
-        if (!ReceiptItems.Any() || SelectedSupplier == null) return;
+        try
+        {
+            ErrorMessage = string.Empty;
+        if (!ReceiptItems.Any() || SelectedSupplier == null) throw new ArgumentException("Select a supplier and add at least one item.");
 
         decimal globalDiscount = decimal.TryParse(TotalDiscount.Replace(",", ""), out var td) ? td : 0;
         var itemsDto = ReceiptItems.Select(x => new PurchaseItemDto(x.ProductId, x.Quantity, x.UnitPrice, x.DiscountAmount)).ToList();
@@ -278,7 +289,7 @@ public partial class PurchaseReceiptViewModel : ObservableObject
                     CloseButtonText = "OK",
                     XamlRoot = app.AppWindow.Content.XamlRoot
                 };
-                await dialog.ShowAsync();
+                await App.ShowDialogAsync(dialog);
 
                 string uniqueTag = $"PurchaseReceipt_Edit_{_editingReceiptId.Value}";
                 app.AppWindow.CloseTab(uniqueTag);
@@ -303,10 +314,23 @@ public partial class PurchaseReceiptViewModel : ObservableObject
             AdditionalCharges = "0";
             Remarks = string.Empty;
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
+    private void OnLineChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(TotalAmount));
+        OnPropertyChanged(nameof(TotalLineDiscounts));
+        OnPropertyChanged(nameof(OverallTotalDiscount));
+        OnPropertyChanged(nameof(NetAmount));
+    }
     public async Task InitializeAsync(int? receiptId)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         _editingReceiptId = receiptId;
 
         if (receiptId.HasValue)
@@ -353,7 +377,16 @@ public partial class PurchaseReceiptViewModel : ObservableObject
         {
             SubmitButtonText = "Submit Purchase Receipt";
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     #endregion
 }
+
+
+
+
+
+

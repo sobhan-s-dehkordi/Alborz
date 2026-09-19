@@ -1,82 +1,34 @@
-ï»¿using Alborz.Application.Contracts;
-using Alborz.Application.Features.Products.Commands;
+using Alborz.Application;
+using Alborz.Infrastructure;
 using Alborz.Infrastructure.Data;
-using Alborz.Infrastructure.Repositories;
-using Alborz.Infrastructure.Services;
 using Alborz.WinUI.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProjectName.WinUI.ViewModels;
 using System;
-using System.IO;
 
 namespace Alborz.WinUI;
 
 public partial class App : Microsoft.UI.Xaml.Application
 {
-
-    #region <Fields>
-
-    public MainWindow AppWindow { get; private set; }
-
-    #endregion
-
-    #region <Properties>
-
+    public MainWindow AppWindow { get; private set; } = null!;
     public IServiceProvider Services { get; }
-
-    #endregion
-
-    #region <Constructor>
 
     public App()
     {
         InitializeComponent();
         Services = ConfigureServices();
-
-        var dbContext = Services.GetRequiredService<AppDbContext>();
-        dbContext.Database.EnsureCreated();
+        var appearance = Services.GetRequiredService<Alborz.WinUI.Services.AppearanceService>();
+        Resources["Appearance"] = appearance;
+        Resources["ContentControlThemeFontFamily"] = appearance.FontFamily;
     }
-
-    #endregion
-
-    #region <Methods>
 
     private static IServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
-
         services.AddLogging();
-
-        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        string appFolder = Path.Combine(localAppData, "AlborzApp");
-
-        if (!Directory.Exists(appFolder))
-        {
-            Directory.CreateDirectory(appFolder);
-        }
-
-        string dbPath = Path.Combine(appFolder, "Alborz.db");
-
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlite($"Data Source={dbPath}"));
-
-        // Repositories & UnitOfWork
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-        services.AddScoped<IPartyRepository, PartyRepository>();
-        services.AddScoped<IPurchaseReceiptRepository, PurchaseReceiptRepository>();
-
-        // Services
-        services.AddScoped<IExcelExportService, ExcelExportService>();
-
-        // MediatR
-        services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(ProductCommandHandlers).Assembly));
-
-        // ViewModels
+        services.AddSingleton<Alborz.WinUI.Services.AppearanceService>();
+        services.AddApplication();
+        services.AddInfrastructure(DatabaseSettings.ConnectionString);
         services.AddTransient<PurchaseReceiptViewModel>();
         services.AddTransient<PurchaseHistoryViewModel>();
         services.AddTransient<ProductsViewModel>();
@@ -84,20 +36,40 @@ public partial class App : Microsoft.UI.Xaml.Application
         services.AddTransient<SalesInvoiceViewModel>();
         services.AddTransient<SalesHistoryViewModel>();
         services.AddTransient<CustomersViewModel>();
-
-        return services.BuildServiceProvider();
+        services.AddTransient<ReportsViewModel>();
+        services.AddTransient<Alborz.WinUI.ViewModels.Settings.SettingsViewModel>();
+        return services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateScopes = true,
+            ValidateOnBuild = true
+        });
     }
 
-    #endregion
+    public static async System.Threading.Tasks.Task<Microsoft.UI.Xaml.Controls.ContentDialogResult> ShowDialogAsync(
+        Microsoft.UI.Xaml.Controls.ContentDialog dialog)
+    {
+        ((App)Current).Services.GetRequiredService<Alborz.WinUI.Services.AppearanceService>().ApplyTo(dialog);
+        return await dialog.ShowAsync();
+    }
 
-    #region <Overrides>
-
-    protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         AppWindow = new MainWindow();
+        AppWindow.SetDatabaseReady(false, "Checking SQL Server connection…");
         AppWindow.Activate();
+        try
+        {
+            using var scope = Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var ready = await db.Database.CanConnectAsync()
+                && !System.Linq.Enumerable.Any(await db.Database.GetPendingMigrationsAsync());
+            AppWindow.SetDatabaseReady(ready, ready ? string.Empty :
+                "Database is unavailable or requires migration. Check the connection and apply migrations before using business features. Appearance settings remain available.");
+        }
+        catch (Exception)
+        {
+            AppWindow.SetDatabaseReady(false,
+                "Database connection failed. Check SQL Server and ALBORZ_SQLSERVER_CONNECTION. Appearance settings remain available.");
+        }
     }
-
-    #endregion
-
 }

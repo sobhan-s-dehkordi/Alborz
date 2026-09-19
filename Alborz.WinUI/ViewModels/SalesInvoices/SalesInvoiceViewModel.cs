@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Features.Customers.Commands;
+using Alborz.Application.Features.Customers.Commands;
 using Alborz.Application.Features.Customers.Queries;
 using Alborz.Application.Features.Invoices.Commands;
 using Alborz.Application.Features.Invoices.Queries;
@@ -13,9 +13,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Alborz.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.SalesInvoices;
 
-public partial class SalesInvoiceViewModel : ObservableObject
+public partial class SalesInvoiceViewModel : Alborz.WinUI.ViewModels.Common.ViewModelBase
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private ProductDto? _selectedProductFromSearch;
@@ -26,48 +26,44 @@ public partial class SalesInvoiceViewModel : ObservableObject
     public ObservableCollection<ProductDto> ProductSearchResults { get; } = new();
     public ObservableCollection<PaymentMethod> PaymentMethods { get; } = new(Enum.GetValues<PaymentMethod>());
 
-    // --- سرچ فیلدها ---
-    [ObservableProperty] private CustomerDto? _selectedCustomer;
-    [ObservableProperty] private string _searchCustomerText = string.Empty;
-    [ObservableProperty] private string _searchProductText = string.Empty;
+    // --- ??? ?????? ---
+    [ObservableProperty] public partial CustomerDto? SelectedCustomer { get; set; }
+    [ObservableProperty] public partial string SearchCustomerText { get; set; } = string.Empty;
+    [ObservableProperty] public partial string SearchProductText { get; set; } = string.Empty;
 
-    // --- فیلدهای ثبت سریع مشتری ---
-    [ObservableProperty] private string _newCustomerName = string.Empty;
-    [ObservableProperty] private string _newCustomerPhone = string.Empty;
-    [ObservableProperty] private string _newCustomerNationalCode = string.Empty;
+    // --- ??????? ??? ???? ????? ---
+    [ObservableProperty] public partial string NewCustomerName { get; set; } = string.Empty;
+    [ObservableProperty] public partial string NewCustomerPhone { get; set; } = string.Empty;
+    [ObservableProperty] public partial string NewCustomerNationalCode { get; set; } = string.Empty;
 
-    // --- فیلدهای ثبت سریع کالا ---
-    [ObservableProperty] private string _newProductName = string.Empty;
-    [ObservableProperty] private string _newProductSellPrice = string.Empty;
+    // --- ??????? ??? ???? ???? ---
+    [ObservableProperty] public partial string NewProductName { get; set; } = string.Empty;
+    [ObservableProperty] public partial string NewProductSellPrice { get; set; } = string.Empty;
 
-    // --- اطلاعات اصلی فاکتور ---
-    [ObservableProperty] private DateTimeOffset _invoiceDate = DateTimeOffset.Now;
-    [ObservableProperty] private PaymentMethod _selectedPaymentMethod = PaymentMethod.Cash;
-    [ObservableProperty] private string _remarks = string.Empty;
+    // --- ??????? ???? ?????? ---
+    [ObservableProperty] public partial DateTimeOffset InvoiceDate { get; set; } = DateTimeOffset.Now;
+    [ObservableProperty] public partial PaymentMethod SelectedPaymentMethod { get; set; } = PaymentMethod.Cash;
+    [ObservableProperty] public partial string Remarks { get; set; } = string.Empty;
 
-    // --- مقادیر ورودی اقلام ---
-    [ObservableProperty] private int _inputQuantity = 1;
-    [ObservableProperty] private string _inputPrice = "0";
-    [ObservableProperty] private string _inputDiscountPercentage = "0";
+    // --- ?????? ????? ????? ---
+    [ObservableProperty] public partial int InputQuantity { get; set; } = 1;
+    [ObservableProperty] public partial string InputPrice { get; set; } = "0";
+    [ObservableProperty] public partial string InputDiscountPercentage { get; set; } = "0";
 
-    // --- مبالغ کل ---
+    // --- ????? ?? ---
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(NetAmount))]
     [NotifyPropertyChangedFor(nameof(OverallTotalDiscount))]
-    private string _totalDiscount = "0";
+    public partial string TotalDiscount { get; set; } = "0";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(NetAmount))]
     [NotifyPropertyChangedFor(nameof(AdditionalChargesValue))]
-    private string _additionalCharges = "0";
+    public partial string AdditionalCharges { get; set; } = "0";
 
-    [ObservableProperty] private string _submitButtonText = "Submit Sales Invoice";
+    [ObservableProperty] public partial string SubmitButtonText { get; set; } = "Submit Sales Invoice";
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasError))]
-    private string _errorMessage = string.Empty;
 
-    public bool HasError => !string.IsNullOrEmpty(ErrorMessage);
 
     public decimal AdditionalChargesValue => decimal.TryParse(AdditionalCharges.Replace(",", ""), out var ac) ? ac : 0;
     public decimal TotalAmount => InvoiceItems.Sum(x => (x.Quantity * x.UnitPrice));
@@ -95,7 +91,12 @@ public partial class SalesInvoiceViewModel : ObservableObject
     {
         _scopeFactory = scopeFactory;
         InvoiceItems.CollectionChanged += (s, e) =>
-        {
+        {            if (e.OldItems != null)
+                foreach (System.ComponentModel.INotifyPropertyChanged item in e.OldItems)
+                    item.PropertyChanged -= OnLineChanged;
+            if (e.NewItems != null)
+                foreach (System.ComponentModel.INotifyPropertyChanged item in e.NewItems)
+                    item.PropertyChanged += OnLineChanged;
             OnPropertyChanged(nameof(TotalAmount));
             OnPropertyChanged(nameof(TotalLineDiscounts));
             OnPropertyChanged(nameof(OverallTotalDiscount));
@@ -103,8 +104,18 @@ public partial class SalesInvoiceViewModel : ObservableObject
         };
     }
 
+    private void OnLineChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(TotalAmount));
+        OnPropertyChanged(nameof(TotalLineDiscounts));
+        OnPropertyChanged(nameof(OverallTotalDiscount));
+        OnPropertyChanged(nameof(NetAmount));
+    }
     public async Task InitializeAsync(int? invoiceId)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         _editingInvoiceId = invoiceId;
 
         if (invoiceId.HasValue)
@@ -156,12 +167,18 @@ public partial class SalesInvoiceViewModel : ObservableObject
             SelectedCustomer = null;
             SearchCustomerText = string.Empty;
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
-    // --- جستجوی مشتری ---
+    // --- ?????? ????? ---
     [RelayCommand]
     public async Task SearchCustomersAsync(string searchText)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
         {
             CustomerSearchResults.Clear();
@@ -176,12 +193,18 @@ public partial class SalesInvoiceViewModel : ObservableObject
 
         CustomerSearchResults.Clear();
         foreach (var item in results) CustomerSearchResults.Add(item);
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
-    // --- ثبت سریع مشتری ---
+    // --- ??? ???? ????? ---
     [RelayCommand]
     public async Task QuickRegisterCustomerAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(NewCustomerName) || string.IsNullOrWhiteSpace(NewCustomerPhone)) return;
 
         using var scope = _scopeFactory.CreateScope();
@@ -198,12 +221,18 @@ public partial class SalesInvoiceViewModel : ObservableObject
         NewCustomerName = string.Empty;
         NewCustomerPhone = string.Empty;
         NewCustomerNationalCode = string.Empty;
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
-    // --- جستجوی کالا ---
+    // --- ?????? ???? ---
     [RelayCommand]
     public async Task SearchProductsAsync(string searchText)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
         {
             ProductSearchResults.Clear();
@@ -216,6 +245,9 @@ public partial class SalesInvoiceViewModel : ObservableObject
 
         ProductSearchResults.Clear();
         foreach (var item in results) ProductSearchResults.Add(item);
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     public void SelectProduct(ProductDto? product)
@@ -235,18 +267,16 @@ public partial class SalesInvoiceViewModel : ObservableObject
     {
         ErrorMessage = string.Empty;
 
-        if (!int.TryParse(InputDiscountPercentage, out int discountPercent)) discountPercent = 0;
-        if (discountPercent < 0 || discountPercent > 100 || discountPercent % 5 != 0)
+        if (!decimal.TryParse(InputDiscountPercentage, out var discountPercent) || discountPercent < 0 || discountPercent > 100)
         {
-            ErrorMessage = "Discount must be a multiple of 5 (e.g., 0, 5, 10, 15) and between 0 and 100.";
+            ErrorMessage = "Discount must be between 0 and 100 percent.";
             return;
         }
-
         if (_selectedProductFromSearch == null || InputQuantity <= 0) return;
-        if (!decimal.TryParse(InputPrice.Replace(",", ""), out decimal price)) return;
+        if (!decimal.TryParse(InputPrice.Replace(",", ""), out decimal price) || price < 0 || price > 9999999999999999.99m / InputQuantity) { ErrorMessage = "Enter a valid non-negative price."; return; }
 
         decimal totalLinePrice = price * InputQuantity;
-        decimal calculatedDiscountAmount = totalLinePrice * (decimal)(discountPercent / 100.0);
+        decimal calculatedDiscountAmount = decimal.Round(totalLinePrice * discountPercent / 100m, 2);
 
         var newItem = new InvoiceItemUIModel
         {
@@ -274,6 +304,9 @@ public partial class SalesInvoiceViewModel : ObservableObject
     [RelayCommand]
     public async Task SaveInvoiceAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         ErrorMessage = string.Empty;
 
         if (!InvoiceItems.Any())
@@ -303,7 +336,7 @@ public partial class SalesInvoiceViewModel : ObservableObject
                 globalDiscount,
                 AdditionalChargesValue,
                 Remarks,
-                itemsDto
+                itemsDto, InvoiceDate.DateTime
             );
 
             await mediator.Send(command);
@@ -317,7 +350,7 @@ public partial class SalesInvoiceViewModel : ObservableObject
                     CloseButtonText = "OK",
                     XamlRoot = app.AppWindow.Content.XamlRoot
                 };
-                await dialog.ShowAsync();
+                await App.ShowDialogAsync(dialog);
 
                 string uniqueTag = $"SalesInvoice_Edit_{_editingInvoiceId.Value}";
                 app.AppWindow.CloseTab(uniqueTag);
@@ -331,7 +364,7 @@ public partial class SalesInvoiceViewModel : ObservableObject
                 globalDiscount,
                 AdditionalChargesValue,
                 Remarks,
-                itemsDto
+                itemsDto, InvoiceDate.DateTime
             );
 
             int newInvoiceId = await mediator.Send(command);
@@ -345,7 +378,7 @@ public partial class SalesInvoiceViewModel : ObservableObject
                     CloseButtonText = "OK",
                     XamlRoot = app.AppWindow.Content.XamlRoot
                 };
-                await dialog.ShowAsync();
+                await App.ShowDialogAsync(dialog);
             }
 
             InvoiceItems.Clear();
@@ -355,5 +388,12 @@ public partial class SalesInvoiceViewModel : ObservableObject
             AdditionalCharges = "0";
             Remarks = string.Empty;
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 }
+
+
+
+

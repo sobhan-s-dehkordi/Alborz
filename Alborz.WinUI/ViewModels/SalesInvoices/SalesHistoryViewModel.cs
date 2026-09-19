@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Features.Customers.Queries;
+using Alborz.Application.Features.Customers.Queries;
 using Alborz.Application.Features.Invoices.Queries;
 using Alborz.WinUI;
 using Alborz.WinUI.Views.SalesInvoices;
@@ -12,9 +12,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Alborz.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.SalesInvoices;
 
-public partial class SalesHistoryViewModel : ObservableObject
+public partial class SalesHistoryViewModel : Alborz.WinUI.ViewModels.Common.ViewModelBase
 {
     #region <Fields>
 
@@ -24,7 +24,7 @@ public partial class SalesHistoryViewModel : ObservableObject
 
     #region <Collections>
 
-    // فرض بر وجود DTO ای به نام SalesInvoiceDto برای لیست فاکتورها
+    // ??? ?? ???? DTO ?? ?? ??? SalesInvoiceDto ???? ???? ????????
     public ObservableCollection<SalesInvoiceDto> Invoices { get; } = new();
 
     public ObservableCollection<CustomerDto> CustomerSearchResults { get; } = new();
@@ -34,29 +34,29 @@ public partial class SalesHistoryViewModel : ObservableObject
     #region <Observable & Computed Properties>
 
     [ObservableProperty]
-    private CustomerDto? _selectedCustomer;
+    public partial CustomerDto? SelectedCustomer { get; set; }
 
     [ObservableProperty]
-    private string _searchCustomerText = string.Empty;
+    public partial string SearchCustomerText { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private DateTimeOffset? _fromDate = DateTimeOffset.Now.AddDays(-7);
+    public partial DateTimeOffset? FromDate { get; set; } = DateTimeOffset.Now.AddDays(-7);
 
     [ObservableProperty]
-    private DateTimeOffset? _toDate = DateTimeOffset.Now;
+    public partial DateTimeOffset? ToDate { get; set; } = DateTimeOffset.Now;
 
     [ObservableProperty]
-    private string _invoiceIdFilter = string.Empty;
+    public partial string InvoiceIdFilter { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsInvoiceSelected))]
-    private SalesInvoiceDto? _selectedInvoice;
+    public partial SalesInvoiceDto? SelectedInvoice { get; set; }
 
     public bool HasInvoices => Invoices.Any();
 
     public bool IsInvoiceSelected => SelectedInvoice != null;
 
-    // محاسبات فوتر
+    // ??????? ????
     public decimal TotalAmountSummary => Invoices.Sum(r => r.TotalAmount);
     public decimal TotalDiscountSummary => Invoices.Sum(r => r.TotalDiscount);
     public decimal TotalAdditionalChargesSummary => Invoices.Sum(r => r.AdditionalCharges);
@@ -89,6 +89,9 @@ public partial class SalesHistoryViewModel : ObservableObject
     [RelayCommand]
     public async Task SearchCustomersAsync(string searchText)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
         {
             CustomerSearchResults.Clear();
@@ -99,7 +102,7 @@ public partial class SalesHistoryViewModel : ObservableObject
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        // استفاده از کوئری جستجوی مشتری (همانند فاکتور فروش)
+        // ??????? ?? ????? ?????? ????? (?????? ?????? ????)
         var query = new GetCustomersQuery(searchText, null, null);
         var results = await mediator.Send(query);
 
@@ -108,18 +111,24 @@ public partial class SalesHistoryViewModel : ObservableObject
         {
             CustomerSearchResults.Add(item);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task SearchInvoicesAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
         int? customerId = SelectedCustomer?.Id;
         int? invoiceId = int.TryParse(InvoiceIdFilter, out var id) ? id : null;
 
-        // فراخوانی کوئری جهت فیلتر و دریافت لیست فاکتورها
+        // ???????? ????? ??? ????? ? ?????? ???? ????????
         var query = new GetSalesInvoicesQuery(
             customerId,
             FromDate?.DateTime,
@@ -140,11 +149,17 @@ public partial class SalesHistoryViewModel : ObservableObject
 
         SelectedInvoice = null;
         OnPropertyChanged(nameof(TotalAmountSummary));
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task EditInvoiceAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (SelectedInvoice == null) return;
 
         if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
@@ -152,7 +167,7 @@ public partial class SalesHistoryViewModel : ObservableObject
             string uniqueTag = $"SalesInvoice_Edit_{SelectedInvoice.Id}";
             string header = $"Edit Inv #{SelectedInvoice.Id}";
 
-            // باز کردن تب مربوط به صفحه فروش (همان صفحه‌ای که با هم طراحی کردیم)
+            // ??? ???? ?? ????? ?? ???? ???? (???? ??????? ?? ?? ?? ????? ?????)
             app.AppWindow.OpenOrFocusTab(
                 header,
                 typeof(Alborz.WinUI.Views.SalesInvoices.SaleInvoicePage),
@@ -162,17 +177,23 @@ public partial class SalesHistoryViewModel : ObservableObject
         }
 
         await Task.CompletedTask;
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task ViewDetailsAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (SelectedInvoice == null) return;
 
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-        // واکشی مجدد جزئیات فاکتور شامل ریز اقلام برای نمایش در دیالوگ
+        // ????? ???? ?????? ?????? ???? ??? ????? ???? ????? ?? ??????
         var invoiceDetail = await mediator.Send(new GetSalesInvoiceByIdQuery(SelectedInvoice.Id));
 
         if (invoiceDetail != null && Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
@@ -182,13 +203,19 @@ public partial class SalesHistoryViewModel : ObservableObject
                 XamlRoot = app.AppWindow.Content.XamlRoot
             };
 
-            await dialog.ShowAsync();
+            await App.ShowDialogAsync(dialog);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task ExportToExcelAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (!Invoices.Any()) return;
 
         try
@@ -211,13 +238,9 @@ public partial class SalesHistoryViewModel : ObservableObject
             {
                 using var scope = _scopeFactory.CreateScope();
 
-                // فرض بر وجود متد ExportSalesInvoices در سرویس اکسل
-                // var excelService = scope.ServiceProvider.GetRequiredService<IExcelExportService>();
-                // byte[] fileBytes = excelService.ExportSalesInvoices(Invoices);
-
-                // Windows.Storage.CachedFileManager.DeferUpdates(file);
-                // await Windows.Storage.FileIO.WriteBytesAsync(file, fileBytes);
-                // await Windows.Storage.CachedFileManager.CompleteUpdatesAsync(file);
+                var excelService = scope.ServiceProvider.GetRequiredService<Alborz.Application.Contracts.IExcelExportService>();
+                byte[] fileBytes = excelService.ExportSalesInvoices(Invoices);
+                await Windows.Storage.FileIO.WriteBytesAsync(file, fileBytes);
 
                 await ShowDialogAsync("Export Successful", $"Data exported to {file.Name}");
             }
@@ -226,6 +249,9 @@ public partial class SalesHistoryViewModel : ObservableObject
         {
             await ShowDialogAsync("Export Failed", ex.Message);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     private async Task ShowDialogAsync(string title, string content)
@@ -239,9 +265,12 @@ public partial class SalesHistoryViewModel : ObservableObject
                 CloseButtonText = "OK",
                 XamlRoot = app.AppWindow.Content.XamlRoot
             };
-            await dialog.ShowAsync();
+            await App.ShowDialogAsync(dialog);
         }
     }
 
     #endregion
 }
+
+
+

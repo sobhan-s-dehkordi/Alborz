@@ -1,4 +1,4 @@
-﻿namespace Alborz.Application.Features.PurchaseReceipts.Commands;
+namespace Alborz.Application.Features.PurchaseReceipts.Queries;
 
 public record PurchaseReceiptItemDto(
     int Id,
@@ -9,3 +9,4 @@ public record PurchaseReceiptItemDto(
     decimal DiscountAmount,
     decimal TotalPrice
 );
+

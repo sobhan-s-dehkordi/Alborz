@@ -1,20 +1,24 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Alborz.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.SalesInvoices;
 
 public partial class InvoiceItemUIModel : ObservableObject
 {
     public int ProductId { get; set; }
     public string ProductName { get; set; } = string.Empty;
-    public decimal UnitPrice { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TotalPrice))]
+    public partial decimal UnitPrice { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
-    private int _quantity;
+    public partial int Quantity { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
-    private decimal _discountAmount;
+    public partial decimal DiscountAmount { get; set; }
 
     public decimal TotalPrice => (Quantity * UnitPrice) - DiscountAmount;
 }
+
+

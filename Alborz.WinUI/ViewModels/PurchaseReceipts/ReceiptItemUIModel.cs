@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.PurchaseReceipts;
 
 public partial class ReceiptItemUIModel : ObservableObject
 {
@@ -17,18 +17,19 @@ public partial class ReceiptItemUIModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
-    private int _quantity;
+    public partial int Quantity { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
-    private decimal _unitPrice;
+    public partial decimal UnitPrice { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TotalPrice))]
-    private decimal _discountAmount;
+    public partial decimal DiscountAmount { get; set; }
 
     public decimal TotalPrice => (Quantity * UnitPrice) - DiscountAmount;
 
     #endregion
 
 }
+

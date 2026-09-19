@@ -1,4 +1,4 @@
-﻿using Alborz.Domain.Entities;
+using Alborz.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -18,10 +18,18 @@ public class AppDbContext : DbContext
     public DbSet<PurchaseReceipt> PurchaseReceipts => Set<PurchaseReceipt>();
     public DbSet<PurchaseReceiptItem> PurchaseReceiptItems => Set<PurchaseReceiptItem>();
 
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<decimal>().HavePrecision(18, 2);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            modelBuilder.Entity(entityType.ClrType).Property<byte[]>("RowVersion").IsRowVersion();
     }
 }
+

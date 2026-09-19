@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using ProjectName.WinUI.ViewModels;
+using Alborz.WinUI.ViewModels;
 
 namespace Alborz.WinUI.Views.Products;
 
@@ -50,7 +50,7 @@ public sealed partial class ProductsPage : Page
 
         dialog.XamlRoot = this.XamlRoot;
 
-        var result = await dialog.ShowAsync();
+        var result = await App.ShowDialogAsync(dialog);
 
         if (result == ContentDialogResult.Primary)
         {
@@ -79,7 +79,7 @@ public sealed partial class ProductsPage : Page
         var dialog = new ProductEditorDialog(ViewModel.SelectedProduct);
         dialog.XamlRoot = this.XamlRoot;
 
-        var result = await dialog.ShowAsync();
+        var result = await App.ShowDialogAsync(dialog);
 
         if (result == ContentDialogResult.Primary)
         {
@@ -117,3 +117,4 @@ public sealed partial class ProductsPage : Page
     #endregion
 
 }
+

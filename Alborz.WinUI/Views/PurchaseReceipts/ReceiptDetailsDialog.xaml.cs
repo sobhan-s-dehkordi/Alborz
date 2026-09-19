@@ -1,3 +1,4 @@
+using Alborz.Application.Features.PurchaseReceipts.Queries;
 using Alborz.Application.Features.PurchaseReceipts.Commands;
 using Microsoft.UI.Xaml.Controls;
 
@@ -22,3 +23,4 @@ public sealed partial class ReceiptDetailsDialog : ContentDialog
 
     #endregion
 }
+

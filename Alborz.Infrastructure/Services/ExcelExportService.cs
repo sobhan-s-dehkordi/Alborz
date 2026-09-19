@@ -1,4 +1,5 @@
-﻿using Alborz.Application.Contracts;
+using Alborz.Application.Features.PurchaseReceipts.Queries;
+using Alborz.Application.Contracts;
 using Alborz.Application.Features.PurchaseReceipts.Commands;
 using ClosedXML.Excel;
 
@@ -6,6 +7,23 @@ namespace Alborz.Infrastructure.Services;
 
 public class ExcelExportService : IExcelExportService
 {
+    public byte[] ExportSalesInvoices(IEnumerable<Alborz.Application.Features.Invoices.Queries.SalesInvoiceDto> invoices)
+    {
+        using var workbook = new XLWorkbook();
+        var sheet = workbook.Worksheets.Add("Sales Invoices");
+        sheet.Cell(1, 1).InsertTable(invoices.Select(i => new
+        {
+            i.Id, i.InvoiceDate, i.CustomerName, i.Remarks,
+            i.TotalAmount, i.TotalDiscount, i.AdditionalCharges, i.NetAmount
+        }));
+        sheet.Column(2).Style.DateFormat.Format = "yyyy-mm-dd hh:mm";
+        sheet.Columns(5, 8).Style.NumberFormat.Format = "#,##0.00";
+        sheet.Columns().AdjustToContents();
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        return stream.ToArray();
+    }
+
     public byte[] ExportPurchaseReceipts(IEnumerable<PurchaseReceiptDto> receipts)
     {
         using var workbook = new XLWorkbook();
@@ -57,3 +75,4 @@ public class ExcelExportService : IExcelExportService
         return stream.ToArray();
     }
 }
+

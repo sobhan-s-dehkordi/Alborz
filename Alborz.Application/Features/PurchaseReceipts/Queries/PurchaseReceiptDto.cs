@@ -1,4 +1,4 @@
-﻿namespace Alborz.Application.Features.PurchaseReceipts.Commands;
+namespace Alborz.Application.Features.PurchaseReceipts.Queries;
 
 public record PurchaseReceiptDto(
     int Id,
@@ -13,3 +13,4 @@ public record PurchaseReceiptDto(
     string Remarks,
     List<PurchaseReceiptItemDto> Items
 );
+

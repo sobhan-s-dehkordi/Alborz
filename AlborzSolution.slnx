@@ -2,6 +2,7 @@
   <Project Path="Alborz.Application/Alborz.Application.csproj" />
   <Project Path="Alborz.Domain/Alborz.Domain.csproj" />
   <Project Path="Alborz.Infrastructure/Alborz.Infrastructure.csproj" />
+  <Project Path="Alborz.Tests/Alborz.Tests.csproj" />
   <Project Path="Alborz.WinUI/Alborz.WinUI.csproj">
     <Platform Project="x64" />
     <Deploy />

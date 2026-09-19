@@ -4,8 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Alborz System - Store">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <NavigationView x:Name="MainNav" 
+    <Grid RequestedTheme="{Binding RequestedTheme, Source={StaticResource Appearance}}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <InfoBar x:Name="DatabaseNotice" Severity="Warning" IsClosable="False" IsOpen="False"/>
+        <NavigationView Grid.Row="1" FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="MainNav" 
                         IsBackButtonVisible="Collapsed" 
                         PaneDisplayMode="Left"
                         IsSettingsVisible="False"
@@ -13,68 +15,68 @@
 
 
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Basic Information" SelectsOnInvoked="False">
+                <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Basic Information" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8EC;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Parties" Tag="PartiesPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Parties" Tag="PartiesPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Inventory &amp; Supply" SelectsOnInvoked="False">
+                <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Inventory &amp; Supply" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC5A;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Products" Tag="ProductsPage"/>
-                        <NavigationViewItem Content="Purchase Receipt" Tag="PurchaseReceiptPage"/>
-                        <NavigationViewItem Content="Purchase History" Tag="PurchaseHistoryPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Products" Tag="ProductsPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Purchase Receipt" Tag="PurchaseReceiptPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Purchase History" Tag="PurchaseHistoryPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Store" SelectsOnInvoked="False">
+                <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Store" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE719;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Sale Invoice" Tag="SaleInvoicePage">
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Sale Invoice" Tag="SaleInvoicePage">
                         </NavigationViewItem>
-                        <NavigationViewItem Content="Invoice Archive" Tag="InvoiceArchivePage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Invoice Archive" Tag="InvoiceArchivePage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="CRM" SelectsOnInvoked="False">
+                <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="CRM" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE716;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Customers" Tag="CustomersPage"/>
-                        <NavigationViewItem Content="Register Customer" Tag="CustomerRegistrationPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Customers" Tag="CustomersPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Register Customer" Tag="CustomerRegistrationPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Reports" SelectsOnInvoked="False">
+                <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Reports" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE9F9;"/>
                     </NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
-                        <NavigationViewItem Content="Inventory Ledger" Tag="KardexPage"/>
-                        <NavigationViewItem Content="Top Products" Tag="TopProductsPage"/>
-                        <NavigationViewItem Content="Top Customers" Tag="TopCustomersPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Inventory Ledger" Tag="KardexPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Top Products" Tag="TopProductsPage"/>
+                        <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Top Customers" Tag="TopCustomersPage"/>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem Content="Settings" SelectsOnInvoked="False">
+                <NavigationViewItem FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Settings" Tag="SettingsPage">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE713;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 
-            <TabView x:Name="MainTabView" 
+            <TabView FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="MainTabView" 
                      IsAddTabButtonVisible="False" 
                      TabCloseRequested="MainTabView_TabCloseRequested"
                      HorizontalAlignment="Stretch" 
@@ -84,3 +86,5 @@
         </NavigationView>
     </Grid>
 </Window>
+
+

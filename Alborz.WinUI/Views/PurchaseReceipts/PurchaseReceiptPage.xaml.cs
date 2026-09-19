@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Alborz.Application.Features.Parties.Queries;
 using Alborz.Application.Features.Products.Queries;
-using ProjectName.WinUI.ViewModels;
+using Alborz.WinUI.ViewModels;
 
 namespace Alborz.WinUI.Views.PurchaseReceipts;
 

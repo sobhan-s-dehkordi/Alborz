@@ -1,4 +1,4 @@
-﻿using Alborz.Domain.Common;
+using Alborz.Domain.Common;
 
 namespace Alborz.Domain.Entities;
 
@@ -8,6 +8,7 @@ public class PurchaseReceiptItem : BaseEntity
 
     internal PurchaseReceiptItem(int productId, int quantity, decimal unitPrice, decimal discountAmount)
     {
+        Guard.Line(productId, quantity, unitPrice, discountAmount);
         ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
@@ -23,5 +24,7 @@ public class PurchaseReceiptItem : BaseEntity
 
     public decimal TotalPrice => (Quantity * UnitPrice) - DiscountAmount;
 
-    public Product Product { get; private set; }
+    public Product Product { get; private set; } = null!;
 }
+
+

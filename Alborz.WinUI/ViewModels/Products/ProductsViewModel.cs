@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,9 +7,9 @@ using MediatR;
 using Alborz.Application.Features.Products.Commands;
 using Alborz.Application.Features.Products.Queries;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.Products;
 
-public partial class ProductsViewModel : ObservableObject
+public partial class ProductsViewModel : Alborz.WinUI.ViewModels.Common.ViewModelBase
 {
 
     #region <Fields>
@@ -27,20 +27,20 @@ public partial class ProductsViewModel : ObservableObject
     #region <Observable Properties>
 
     [ObservableProperty]
-    private string _searchCodeFrom = string.Empty;
+    public partial string SearchCodeFrom { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _searchCodeTo = string.Empty;
+    public partial string SearchCodeTo { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _searchBarcode = string.Empty;
+    public partial string SearchBarcode { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _searchName = string.Empty;
+    public partial string SearchName { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsProductSelected))]
-    private ProductDto? _selectedProduct;
+    public partial ProductDto? SelectedProduct { get; set; }
 
     public bool IsProductSelected => SelectedProduct != null;
 
@@ -61,6 +61,9 @@ public partial class ProductsViewModel : ObservableObject
     [RelayCommand]
     public async Task LoadProductsAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         int? codeFrom = int.TryParse(SearchCodeFrom, out int f) ? f : null;
         int? codeTo = int.TryParse(SearchCodeTo, out int t) ? t : null;
 
@@ -83,10 +86,16 @@ public partial class ProductsViewModel : ObservableObject
 
             SelectedProduct = null;
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     public async Task ProcessCreateAsync(string name, string barcode, decimal buyPrice, decimal sellPrice, int stock, int reorder)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         var command = new CreateProductCommand(name, barcode, buyPrice, sellPrice, stock, reorder);
 
         using (var scope = _scopeFactory.CreateScope())
@@ -96,10 +105,16 @@ public partial class ProductsViewModel : ObservableObject
         }
 
         await LoadProductsAsync();
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     public async Task ProcessUpdateAsync(int id, string name, string barcode, decimal buyPrice, decimal sellPrice, int reorder)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         var command = new UpdateProductCommand(id, name, barcode, buyPrice, sellPrice, reorder);
 
         using (var scope = _scopeFactory.CreateScope())
@@ -109,7 +124,12 @@ public partial class ProductsViewModel : ObservableObject
         }
 
         await LoadProductsAsync();
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     #endregion
 }
+
+

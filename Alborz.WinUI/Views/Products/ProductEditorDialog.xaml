@@ -1,5 +1,5 @@
-<ContentDialog
-    x:Class="Alborz.WinUI.Views.Products.ProductEditorDialog"
+<ContentDialog RequestedTheme="{Binding RequestedTheme, Source={StaticResource Appearance}}"
+ FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}"    x:Class="Alborz.WinUI.Views.Products.ProductEditorDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Product Details"
@@ -9,11 +9,11 @@
     Opened="ContentDialog_Opened">
 
     <StackPanel Spacing="12" Width="350">
-        <TextBox x:Name="NameTextBox" 
+        <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="NameTextBox" 
                  Header="Product Name" 
                  PlaceholderText="Enter product name"/>
 
-        <TextBox x:Name="BarcodeTextBox" 
+        <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="BarcodeTextBox" 
                  Header="Barcode" 
                  PlaceholderText="Enter barcode"
                  TextChanging="NumericOnly_TextChanging"/>
@@ -23,13 +23,13 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="PurchasePriceTextBox" 
+            <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="PurchasePriceTextBox" 
                      Grid.Column="0" 
                      Header="Purchase Price" 
                      PlaceholderText="0"
                      TextChanging="Currency_TextChanging"/>
 
-            <TextBox x:Name="SellPriceTextBox" 
+            <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="SellPriceTextBox" 
                      Grid.Column="1" 
                      Header="Sell Price" 
                      PlaceholderText="0"
@@ -41,22 +41,24 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBox x:Name="InitialStockTextBox" 
+            <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="InitialStockTextBox" 
                      Grid.Column="0" 
                      Header="Initial Stock" 
                      PlaceholderText="0"
                      TextChanging="NumericOnly_TextChanging"/>
 
-            <TextBox x:Name="ReorderPointTextBox" 
+            <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="ReorderPointTextBox" 
                      Grid.Column="1" 
                      Header="Reorder Point" 
                      PlaceholderText="0"
                      TextChanging="NumericOnly_TextChanging"/>
         </Grid>
 
-        <TextBlock x:Name="ErrorTextBlock" 
+        <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" x:Name="ErrorTextBlock" 
                    Foreground="Red" 
                    TextWrapping="Wrap" 
                    Visibility="Collapsed"/>
     </StackPanel>
 </ContentDialog>
+
+

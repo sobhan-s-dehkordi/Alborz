@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Contracts;
+using Alborz.Application.Contracts;
 using Alborz.Domain.Entities;
 using Alborz.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ public class CustomerRepository : ICustomerRepository
 
     public CustomerRepository(AppDbContext context) => _context = context;
 
-    public async Task<Customer> GetByIdAsync(int id) =>
+    public async Task<Customer?> GetByIdAsync(int id) =>
         await _context.Customers.FindAsync(id);
 
     public async Task<List<Customer>> SearchAsync(string? name, string? phone, string? nationalCode)
@@ -44,3 +44,4 @@ public class CustomerRepository : ICustomerRepository
         _context.Customers.Update(customer);
     
 }
+

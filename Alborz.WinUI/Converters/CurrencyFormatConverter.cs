@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Data;
 using System;
 
 namespace Alborz.WinUI.Converters;
@@ -16,6 +16,9 @@ public class CurrencyFormatConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        throw new NotImplementedException();
+        return decimal.TryParse(value?.ToString(), System.Globalization.NumberStyles.Number,
+            System.Globalization.CultureInfo.CurrentCulture, out var amount)
+            ? amount : Microsoft.UI.Xaml.DependencyProperty.UnsetValue;
     }
 }
+

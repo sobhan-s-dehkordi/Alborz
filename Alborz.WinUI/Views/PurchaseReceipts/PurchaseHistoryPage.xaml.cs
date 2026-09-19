@@ -1,7 +1,7 @@
 using Alborz.Application.Features.Parties.Queries;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using ProjectName.WinUI.ViewModels;
+using Alborz.WinUI.ViewModels;
 
 namespace Alborz.WinUI.Views.PurchaseReceipts;
 
@@ -51,3 +51,4 @@ public sealed partial class PurchaseHistoryPage : Page
 
     #endregion
 }
+

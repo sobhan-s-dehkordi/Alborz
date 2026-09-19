@@ -1,4 +1,4 @@
-ï»¿using Alborz.Application.Features.Customers.Commands;
+using Alborz.Application.Features.Customers.Commands;
 using Alborz.Application.Features.Customers.Queries;
 using Alborz.WinUI;
 using Alborz.WinUI.Views.Customers;
@@ -10,26 +10,26 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.Customers;
 
-public partial class CustomersViewModel : ObservableObject
+public partial class CustomersViewModel : Alborz.WinUI.ViewModels.Common.ViewModelBase
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
     public ObservableCollection<CustomerDto> Customers { get; } = new();
 
     [ObservableProperty]
-    private string _searchName = string.Empty;
+    public partial string SearchName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _searchPhone = string.Empty;
+    public partial string SearchPhone { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string _searchNationalCode = string.Empty;
+    public partial string SearchNationalCode { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsCustomerSelected))]
-    private CustomerDto? _selectedCustomer;
+    public partial CustomerDto? SelectedCustomer { get; set; }
 
     public bool IsCustomerSelected => SelectedCustomer != null;
 
@@ -40,8 +40,37 @@ public partial class CustomersViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public async Task ShowHistoryAsync()
+    {
+        if (SelectedCustomer is not { } customer) return;
+        try
+        {
+            ErrorMessage = string.Empty;
+            using var scope = _scopeFactory.CreateScope();
+            var history = await scope.ServiceProvider.GetRequiredService<IMediator>()
+                .Send(new GetCustomerHistoryQuery(customer.Id));
+            var lines = new System.Collections.Generic.List<string>();
+            foreach (var item in history)
+                lines.Add($"#{item.InvoiceId} | {item.Date:yyyy-MM-dd} | {item.TotalAmount:N2} | {item.PaymentMethod}");
+            if (lines.Count == 0) lines.Add("No purchases recorded.");
+            var app = (App)Microsoft.UI.Xaml.Application.Current;
+            var dialog = new Microsoft.UI.Xaml.Controls.ContentDialog
+            {
+                Title = $"Purchase history — {customer.Name}",
+                Content = new Microsoft.UI.Xaml.Controls.ListView { ItemsSource = lines, MaxHeight = 400 },
+                CloseButtonText = "Close",
+                XamlRoot = app.AppWindow.Content.XamlRoot
+            };
+            await App.ShowDialogAsync(dialog);
+        }
+        catch (Exception ex) { ReportError(ex); }
+    }
+    [RelayCommand]
     public async Task LoadCustomersAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
@@ -56,11 +85,17 @@ public partial class CustomersViewModel : ObservableObject
         }
 
         SelectedCustomer = null;
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task ShowAddDialogAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (Microsoft.UI.Xaml.Application.Current is App app 
             && app.AppWindow != null)
         {
@@ -69,7 +104,7 @@ public partial class CustomersViewModel : ObservableObject
                 XamlRoot = app.AppWindow.Content.XamlRoot
             };
 
-            var result = await dialog.ShowAsync();
+            var result = await App.ShowDialogAsync(dialog);
 
             if (result == Microsoft.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
@@ -82,11 +117,17 @@ public partial class CustomersViewModel : ObservableObject
                 await LoadCustomersAsync();
             }
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task ShowEditDialogAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (SelectedCustomer == null) return;
 
         if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
@@ -96,7 +137,7 @@ public partial class CustomersViewModel : ObservableObject
                 XamlRoot = app.AppWindow.Content.XamlRoot
             };
 
-            var result = await dialog.ShowAsync();
+            var result = await App.ShowDialogAsync(dialog);
 
             if (result == Microsoft.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
@@ -104,7 +145,7 @@ public partial class CustomersViewModel : ObservableObject
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
                 var command = new UpdateCustomerCommand(
-                    dialog.EditingCustomerId.Value,
+                    dialog.EditingCustomerId ?? throw new InvalidOperationException("Customer ID is missing."),
                     dialog.CustomerName,
                     dialog.PhoneNumber,
                     dialog.NationalCode);
@@ -114,5 +155,15 @@ public partial class CustomersViewModel : ObservableObject
                 await LoadCustomersAsync();
             }
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 }
+
+
+
+
+
+
+

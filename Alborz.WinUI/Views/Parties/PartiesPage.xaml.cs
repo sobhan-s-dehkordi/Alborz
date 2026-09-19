@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Alborz.Application.Features.Parties.Queries;
-using ProjectName.WinUI.ViewModels;
+using Alborz.WinUI.ViewModels;
 
 namespace Alborz.WinUI.Views.Parties;
 
@@ -47,7 +47,7 @@ public sealed partial class PartiesPage : Page
         var dialog = new PartyEditorDialog();
         dialog.XamlRoot = this.XamlRoot;
 
-        var result = await dialog.ShowAsync();
+        var result = await App.ShowDialogAsync(dialog);
 
         if (result == ContentDialogResult.Primary)
         {
@@ -62,7 +62,7 @@ public sealed partial class PartiesPage : Page
         var dialog = new PartyEditorDialog(ViewModel.SelectedParty);
         dialog.XamlRoot = this.XamlRoot;
 
-        var result = await dialog.ShowAsync();
+        var result = await App.ShowDialogAsync(dialog);
 
         if (result == ContentDialogResult.Primary)
         {
@@ -78,3 +78,4 @@ public sealed partial class PartiesPage : Page
     #endregion
 
 }
+

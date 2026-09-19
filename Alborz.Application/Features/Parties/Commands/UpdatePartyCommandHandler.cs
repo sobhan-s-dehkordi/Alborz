@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Contracts;
+using Alborz.Application.Contracts;
 using MediatR;
 
 namespace Alborz.Application.Features.Parties.Commands;
@@ -17,6 +17,7 @@ public class UpdatePartyCommandHandler : IRequestHandler<UpdatePartyCommand>
     public async Task Handle(UpdatePartyCommand request, CancellationToken cancellationToken)
     {
         var party = await _repository.GetByIdAsync(request.Id);
+        if (party == null) throw new KeyNotFoundException("Party not found.");
         if (party != null)
         {
             party.Update(request.Name, request.Phone, request.IsSupplier, request.IsCustomer);

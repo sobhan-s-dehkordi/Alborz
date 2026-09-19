@@ -1,4 +1,4 @@
-﻿using Alborz.Application.Contracts;
+using Alborz.Application.Contracts;
 using Alborz.Application.Features.Parties.Queries;
 using Alborz.Application.Features.PurchaseReceipts.Commands;
 using Alborz.Application.Features.PurchaseReceipts.Queries;
@@ -13,9 +13,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectName.WinUI.ViewModels;
+namespace Alborz.WinUI.ViewModels.PurchaseReceipts;
 
-public partial class PurchaseHistoryViewModel : ObservableObject
+public partial class PurchaseHistoryViewModel : Alborz.WinUI.ViewModels.Common.ViewModelBase
 {
     #region <Fields>
 
@@ -34,23 +34,23 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     #region <Observable & Computed Properties>
 
     [ObservableProperty]
-    private PartyDto? _selectedSupplier;
+    public partial PartyDto? SelectedSupplier { get; set; }
 
     [ObservableProperty]
-    private string _searchSupplierText = string.Empty;
+    public partial string SearchSupplierText { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private DateTimeOffset? _fromDate = DateTimeOffset.Now.AddDays(-7);
+    public partial DateTimeOffset? FromDate { get; set; } = DateTimeOffset.Now.AddDays(-7);
 
     [ObservableProperty]
-    private DateTimeOffset? _toDate = DateTimeOffset.Now;
+    public partial DateTimeOffset? ToDate { get; set; } = DateTimeOffset.Now;
 
     [ObservableProperty]
-    private string _referenceNumberFilter = string.Empty;
+    public partial string ReferenceNumberFilter { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsReceiptSelected))]
-    private PurchaseReceiptDto? _selectedReceipt;
+    public partial PurchaseReceiptDto? SelectedReceipt { get; set; }
 
     public bool HasReceipts => Receipts.Any();
 
@@ -88,6 +88,9 @@ public partial class PurchaseHistoryViewModel : ObservableObject
     [RelayCommand]
     public async Task SearchSuppliersAsync(string searchText)
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < 2)
         {
             SupplierSearchResults.Clear();
@@ -105,11 +108,17 @@ public partial class PurchaseHistoryViewModel : ObservableObject
         {
             SupplierSearchResults.Add(item);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task SearchReceiptsAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         using var scope = _scopeFactory.CreateScope();
         var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
@@ -136,11 +145,17 @@ public partial class PurchaseHistoryViewModel : ObservableObject
         SelectedReceipt = null;
 
         OnPropertyChanged(nameof(TotalAmountSummary));
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task EditReceiptAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (SelectedReceipt == null) return;
 
         if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
@@ -157,11 +172,17 @@ public partial class PurchaseHistoryViewModel : ObservableObject
         }
 
         await Task.CompletedTask;
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task ViewDetailsAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (SelectedReceipt == null) return;
 
         if (Microsoft.UI.Xaml.Application.Current is App app && app.AppWindow != null)
@@ -171,13 +192,19 @@ public partial class PurchaseHistoryViewModel : ObservableObject
                 XamlRoot = app.AppWindow.Content.XamlRoot
             };
 
-            await dialog.ShowAsync();
+            await App.ShowDialogAsync(dialog);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     [RelayCommand]
     public async Task ExportToExcelAsync()
     {
+        try
+        {
+            ErrorMessage = string.Empty;
         if (!Receipts.Any()) return;
 
         try
@@ -214,6 +241,9 @@ public partial class PurchaseHistoryViewModel : ObservableObject
         {
             await ShowDialogAsync("Export Failed", ex.Message);
         }
+    
+        }
+        catch (System.Exception ex) { ReportError(ex); }
     }
 
     private async Task ShowDialogAsync(string title, string content)
@@ -227,9 +257,12 @@ public partial class PurchaseHistoryViewModel : ObservableObject
                 CloseButtonText = "OK",
                 XamlRoot = app.AppWindow.Content.XamlRoot
             };
-            await dialog.ShowAsync();
+            await App.ShowDialogAsync(dialog);
         }
     }
 
     #endregion
 }
+
+
+
