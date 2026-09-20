@@ -1,4 +1,4 @@
-﻿using Alborz.Domain.Entities;
+using Alborz.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,6 +10,7 @@ public class PurchaseReceiptItemConfiguration : IEntityTypeConfiguration<Purchas
     {
         builder.ToTable("PurchaseReceiptItems");
         builder.HasKey(x => x.Id);
+        builder.HasIndex(x => new { x.PurchaseReceiptId, x.ProductId }).IsUnique();
 
         builder.Property(x => x.UnitPrice).HasColumnType("decimal(18,2)");
         builder.Property(x => x.DiscountAmount).HasColumnType("decimal(18,2)");

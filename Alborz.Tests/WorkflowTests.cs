@@ -200,4 +200,59 @@ public sealed class WorkflowTests(SqlServerFixture fixture) : IClassFixture<SqlS
         Assert.Empty(await db.Database.GetPendingMigrationsAsync());
         Assert.False(db.Database.HasPendingModelChanges());
     }
+    [Fact]
+    public async Task Removing_sales_row_restores_its_stock_and_persists_remaining_edits()
+    {
+        var first = await Product(20);
+        var second = await Product(20);
+        var id = await Send(new CreateInvoiceCommand(null, PaymentMethod.Cash, 0, 0, "",
+            [new(first, 2, 100, 0), new(second, 3, 100, 0)]));
+        await Send(new UpdateInvoiceCommand(id, null, PaymentMethod.Cash, 0, 0, "",
+            [new(first, 4, 120, 20)]));
+        Assert.Equal(16, await Stock(first));
+        Assert.Equal(20, await Stock(second));
+        var detail = await Send(new GetSalesInvoiceByIdQuery(id));
+        Assert.Single(detail!.Items);
+        Assert.Equal(120, detail.Items[0].UnitPrice);
+        Assert.Equal(20, detail.Items[0].DiscountAmount);
+    }
+
+    [Fact]
+    public async Task Removing_purchase_row_reverses_its_stock()
+    {
+        var first = await Product(0);
+        var second = await Product(0);
+        var supplier = await Supplier();
+        var id = await Send(new CreatePurchaseReceiptCommand(supplier, DateTime.Today, "", 0, 0, "",
+            [new(first, 2, 100, 0), new(second, 3, 100, 0)]));
+        await Send(new UpdatePurchaseReceiptCommand(id, supplier, DateTime.Today, "", 0, 0, "",
+            [new(first, 4, 120, 20)]));
+        Assert.Equal(4, await Stock(first));
+        Assert.Equal(0, await Stock(second));
+        using var scope = fixture.Services.CreateScope();
+        var rows = await scope.ServiceProvider.GetRequiredService<AppDbContext>().PurchaseReceiptItems
+            .Where(i => i.PurchaseReceiptId == id).ToListAsync();
+        Assert.Single(rows);
+        Assert.Equal(120, rows[0].UnitPrice);
+    }
+
+    [Fact]
+    public async Task Invoice_date_selection_is_persisted()
+    {
+        var product = await Product();
+        var date = new DateTime(2026, 8, 1);
+        var id = await Send(new CreateInvoiceCommand(null, PaymentMethod.Cash, 0, 0, "",
+            [new(product, 1, 100, 0)], date));
+        Assert.Equal(date, (await Send(new GetSalesInvoiceByIdQuery(id)))!.InvoiceDate);
+    }
+    [Fact]
+    public async Task Sql_server_rejects_duplicate_product_rows()
+    {
+        var product = await Product();
+        var id = await Send(Invoice(product));
+        using var scope = fixture.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await Assert.ThrowsAsync<Microsoft.Data.SqlClient.SqlException>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"INSERT INTO InvoiceItems (InvoiceId, ProductId, Quantity, UnitPrice, DiscountAmount, CreatedAt) VALUES ({id}, {product}, 1, 100, 0, GETDATE())"));
+    }
 }

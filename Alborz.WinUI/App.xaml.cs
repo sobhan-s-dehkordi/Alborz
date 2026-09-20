@@ -15,11 +15,17 @@ public partial class App : Microsoft.UI.Xaml.Application
 
     public App()
     {
-        InitializeComponent();
-        Services = ConfigureServices();
-        var appearance = Services.GetRequiredService<Alborz.WinUI.Services.AppearanceService>();
-        Resources["Appearance"] = appearance;
-        Resources["ContentControlThemeFontFamily"] = appearance.FontFamily;
+        UnhandledException += (_, args) => Diagnostics.StartupDiagnostics.Record(args.Exception);
+        try
+        {
+            InitializeComponent();
+            Services = ConfigureServices();
+        }
+        catch (Exception ex)
+        {
+            Diagnostics.StartupDiagnostics.Record(ex);
+            throw;
+        }
     }
 
     private static IServiceProvider ConfigureServices()
@@ -54,8 +60,18 @@ public partial class App : Microsoft.UI.Xaml.Application
 
     protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+        try
+        {
+            var appearance = Services.GetRequiredService<Alborz.WinUI.Services.AppearanceService>();
+            Resources["Appearance"] = appearance.State;
+        }
+        catch (Exception ex)
+        {
+            Diagnostics.StartupDiagnostics.Record(ex);
+            throw;
+        }
         AppWindow = new MainWindow();
-        AppWindow.SetDatabaseReady(false, "Checking SQL Server connection…");
+        AppWindow.SetDatabaseReady(false, "Checking SQL Server connectionï¿½");
         AppWindow.Activate();
         try
         {

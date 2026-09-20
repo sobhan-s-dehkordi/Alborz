@@ -13,7 +13,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
         services.AddSingleton<IUserSettingsStore, JsonUserSettingsStore>();
-        services.AddScoped<IDatabaseStatusService, DatabaseStatusService>();
+
         services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IProductRepository, ProductRepository>();
@@ -25,6 +25,3 @@ public static class DependencyInjection
         return services;
     }
 }
-
-
-

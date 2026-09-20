@@ -1,4 +1,4 @@
-﻿using Alborz.Domain.Entities;
+using Alborz.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,6 +10,7 @@ public class InvoiceItemConfiguration : IEntityTypeConfiguration<InvoiceItem>
     {
         builder.ToTable("InvoiceItems");
         builder.HasKey(i => i.Id);
+        builder.HasIndex(i => new { i.InvoiceId, i.ProductId }).IsUnique();
 
         builder.Property(i => i.UnitPrice).HasColumnType("decimal(18,2)");
 

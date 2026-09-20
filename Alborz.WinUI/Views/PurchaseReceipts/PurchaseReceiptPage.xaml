@@ -1,5 +1,4 @@
-<Page
- FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}"    x:Class="Alborz.WinUI.Views.PurchaseReceipts.PurchaseReceiptPage"
+<Page    x:Class="Alborz.WinUI.Views.PurchaseReceipts.PurchaseReceiptPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
@@ -20,31 +19,31 @@
 
         <Border Grid.Row="0" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
             <StackPanel Orientation="Horizontal" Spacing="16">
-                <AutoSuggestBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Header="Supplier / Party" 
-                                Text="{x:Bind ViewModel.SearchSupplierText, Mode=TwoWay}" 
+                <AutoSuggestBox Header="Supplier / Party"
+                                Text="{x:Bind ViewModel.SearchSupplierText, Mode=TwoWay}"
                                 ItemsSource="{x:Bind ViewModel.SupplierSearchResults, Mode=OneWay}"
                                 TextChanged="SupplierSearchBox_TextChanged"
                                 SuggestionChosen="SupplierSearchBox_SuggestionChosen"
-                                TextMemberPath="Name" 
+                                TextMemberPath="Name"
                                 UpdateTextOnSelect="False"
                                 Width="250"
                                 PlaceholderText="Type supplier name...">
                     <AutoSuggestBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{Binding Name}"/>
-                                <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{Binding Phone}" Foreground="Gray" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Phone}" Foreground="Gray" FontSize="12" VerticalAlignment="Center"/>
                             </StackPanel>
                         </DataTemplate>
                     </AutoSuggestBox.ItemTemplate>
                 </AutoSuggestBox>
 
-                <CalendarDatePicker FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Header="Receipt Date" 
-                                    Date="{x:Bind ViewModel.ReceiptDate, Mode=TwoWay}" 
+                <CalendarDatePicker Header="Receipt Date"
+                                    Date="{x:Bind ViewModel.ReceiptDate, Mode=TwoWay}"
                                     HorizontalAlignment="Stretch"/>
 
 
-                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Header="Reference Number" 
+                <TextBox Header="Reference Number" 
                          Text="{x:Bind ViewModel.ReferenceNumber, Mode=TwoWay}" 
                          Width="150" 
                          PlaceholderText="e.g. INV-1002"/>
@@ -54,8 +53,8 @@
         <Border Grid.Row="1" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
             <StackPanel Spacing="12">
 
-                <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}" 
-                 Severity="Error" 
+                <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
+                 Severity="Error"
                  Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" />
 
                 <Grid ColumnSpacing="16">
@@ -67,9 +66,9 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <AutoSuggestBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="0" 
-                                Header="Search Product (Code/Name/Barcode)" 
-                                Text="{x:Bind ViewModel.SearchProductText, Mode=TwoWay}" 
+                    <AutoSuggestBox Grid.Column="0"
+                                Header="Search Product (Code/Name/Barcode)"
+                                Text="{x:Bind ViewModel.SearchProductText, Mode=TwoWay}"
                                 ItemsSource="{x:Bind ViewModel.ProductSearchResults, Mode=OneWay}"
                                 TextChanged="ProductSearchBox_TextChanged"
                                 SuggestionChosen="ProductSearchBox_SuggestionChosen"
@@ -79,31 +78,31 @@
                         <AutoSuggestBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{Binding Id}" Foreground="Gray"/>
-                                    <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{Binding Name}"/>
+                                    <TextBlock Text="{Binding Id}" Foreground="Gray"/>
+                                    <TextBlock Text="{Binding Name}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </AutoSuggestBox.ItemTemplate>
                     </AutoSuggestBox>
 
-                    <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="1" Header="Qty" Text="{x:Bind ViewModel.InputQuantity, Mode=TwoWay}"/>
+                    <TextBox Grid.Column="1" Header="Qty" Text="{x:Bind ViewModel.InputQuantity, Mode=TwoWay}"/>
 
-                    <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="2" Header="Unit Price" Text="{x:Bind ViewModel.InputPrice, Mode=TwoWay}" TextChanging="Currency_TextChanging"/>
+                    <TextBox Grid.Column="2" Header="Unit Price" Text="{x:Bind ViewModel.InputPrice, Mode=TwoWay}" TextChanging="Currency_TextChanging"/>
 
-                    <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="3"
-                             Header="Discount (%)" 
-                             Text="{x:Bind ViewModel.InputDiscountPercentage, Mode=TwoWay}" 
+                    <TextBox Grid.Column="3"
+                             Header="Discount (%)"
+                             Text="{x:Bind ViewModel.InputDiscountPercentage, Mode=TwoWay}"
                              TextChanging="NumericOnly_TextChanging"
                              PlaceholderText="e.g. 0, 5, 10"/>
 
-                    <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="4" Content="Add to List" Command="{x:Bind ViewModel.AddToReceiptCommand}" VerticalAlignment="Bottom" Style="{ThemeResource AccentButtonStyle}" Width="150"/>
+                    <Button Grid.Column="4" Content="Add to List" Command="{x:Bind ViewModel.AddToReceiptCommand}" VerticalAlignment="Bottom" Style="{ThemeResource AccentButtonStyle}" Width="150"/>
 
                 </Grid>
             </StackPanel>
         </Border>
 
         <Border Grid.Row="2" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
-            <controls:DataGrid FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" ItemsSource="{x:Bind ViewModel.ReceiptItems, Mode=OneWay}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Horizontal">
+            <controls:DataGrid ItemsSource="{x:Bind ViewModel.ReceiptItems, Mode=OneWay}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="Horizontal">
                 <controls:DataGrid.Columns>
                     <controls:DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*" MinWidth="300"/>
                     <controls:DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="80" MinWidth="80"/>
@@ -111,11 +110,20 @@
                     <controls:DataGridTextColumn Header="Discount" Binding="{Binding DiscountAmount, Converter={StaticResource CurrencyConverter}}" Width="120" MinWidth="120"/>
                     <controls:DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice, Converter={StaticResource CurrencyConverter}}" Width="140" MinWidth="140"/>
 
-                    <controls:DataGridTemplateColumn Width="70">
+                    <controls:DataGridTemplateColumn Header="Edit" Width="70">
                         <controls:DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Background="Transparent" 
-                            BorderThickness="0" 
+                                <Button Click="EditItemButton_Click" ToolTipService.ToolTip="Edit quantity, price and discount">
+                                    <FontIcon Glyph="&#xE70F;" FontSize="16"/>
+                                </Button>
+                            </DataTemplate>
+                        </controls:DataGridTemplateColumn.CellTemplate>
+                    </controls:DataGridTemplateColumn>
+                    <controls:DataGridTemplateColumn Header="Delete" Width="70">
+                        <controls:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Background="Transparent"
+                            BorderThickness="0"
                             Foreground="IndianRed"
                             Click="RemoveItemButton_Click"
                             ToolTipService.ToolTip="Remove item">
@@ -141,18 +149,18 @@
 
                 <StackPanel Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Left" Spacing="16">
                     <StackPanel Orientation="Horizontal" Spacing="16">
-                        <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Header="Global Discount" 
+                        <TextBox Header="Global Discount" 
                          Text="{x:Bind ViewModel.TotalDiscount, Mode=TwoWay}" 
                          TextChanging="Currency_TextChanging" 
                          Width="180" />
 
-                        <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Header="Additional Charges (Freight, etc.)" 
+                        <TextBox Header="Additional Charges (Freight, etc.)" 
                          Text="{x:Bind ViewModel.AdditionalCharges, Mode=TwoWay}" 
                          TextChanging="Currency_TextChanging" 
                          Width="220" />
                     </StackPanel>
 
-                    <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Header="Remarks / Notes" 
+                    <TextBox Header="Remarks / Notes" 
                      Text="{x:Bind ViewModel.Remarks, Mode=TwoWay}" 
                      Width="416" Height="80" 
                      TextWrapping="Wrap" AcceptsReturn="True"
@@ -162,10 +170,10 @@
                 <StackPanel Grid.Column="1" Spacing="10">
 
                     <Grid>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="Total Amount:" 
+                        <TextBlock Text="Total Amount:" 
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
                                    VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{x:Bind ViewModel.TotalAmount,
+                        <TextBlock Text="{x:Bind ViewModel.TotalAmount,
                             Mode=OneWay,
                             Converter={StaticResource CurrencyConverter}}"
                                    FontWeight="SemiBold"
@@ -174,32 +182,32 @@
                     </Grid>
 
                     <Grid>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="Total Line Discounts:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{x:Bind ViewModel.TotalLineDiscounts, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="IndianRed" HorizontalAlignment="Right" FontSize="14"/>
+                        <TextBlock Text="Total Line Discounts:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
+                        <TextBlock Text="{x:Bind ViewModel.TotalLineDiscounts, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="IndianRed" HorizontalAlignment="Right" FontSize="14"/>
                     </Grid>
 
                     <Grid>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="Overall Discount:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{x:Bind ViewModel.OverallTotalDiscount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="IndianRed" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
+                        <TextBlock Text="Overall Discount:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
+                        <TextBlock Text="{x:Bind ViewModel.OverallTotalDiscount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="IndianRed" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
                     </Grid>
 
                     <Grid>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="Additional Charges:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
-                        <TextBlock FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{x:Bind ViewModel.AdditionalChargesValue, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="SeaGreen" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
+                        <TextBlock Text="Additional Charges:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" FontSize="14"/>
+                        <TextBlock Text="{x:Bind ViewModel.AdditionalChargesValue, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Foreground="SeaGreen" FontWeight="SemiBold" HorizontalAlignment="Right" FontSize="14"/>
                     </Grid>
 
                     <MenuFlyoutSeparator Margin="0,6" />
 
                     <Grid>
-                        <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="Net Payable:" Style="{ThemeResource SubtitleTextBlockStyle}" VerticalAlignment="Center" FontWeight="SemiBold"/>
-                        <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="{x:Bind ViewModel.NetAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" HorizontalAlignment="Right"/>
+                        <TextBlock Text="Net Payable:" Style="{ThemeResource SubtitleTextBlockStyle}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="{x:Bind ViewModel.NetAmount, Mode=OneWay, Converter={StaticResource CurrencyConverter}}" Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" HorizontalAlignment="Right"/>
                     </Grid>
 
-                    <Button FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="{x:Bind ViewModel.SubmitButtonText, Mode=OneWay}" 
-                            Command="{x:Bind ViewModel.SaveReceiptCommand}" 
-                            Style="{ThemeResource AccentButtonStyle}" 
-                            HorizontalAlignment="Stretch" 
-                            Height="48" Margin="0,12,0,0" 
+                    <Button Content="{x:Bind ViewModel.SubmitButtonText, Mode=OneWay}"
+                            Command="{x:Bind ViewModel.SaveReceiptCommand}"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            HorizontalAlignment="Stretch"
+                            Height="48" Margin="0,12,0,0"
                             FontSize="16" FontWeight="SemiBold"/>
                 </StackPanel>
             </Grid>

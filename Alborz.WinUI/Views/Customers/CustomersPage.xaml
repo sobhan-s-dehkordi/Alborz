@@ -1,5 +1,4 @@
-<Page
- FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}"    x:Class="Alborz.WinUI.Views.Customers.CustomersPage"
+<Page    x:Class="Alborz.WinUI.Views.Customers.CustomersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
@@ -33,14 +32,14 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="0" Header="Name" Text="{x:Bind ViewModel.SearchName, Mode=TwoWay}" PlaceholderText="Search by name..."/>
-                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="1" Header="Phone" Text="{x:Bind ViewModel.SearchPhone, Mode=TwoWay}" PlaceholderText="e.g. 0912..."/>
-                <TextBox FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="2" Header="National Code" Text="{x:Bind ViewModel.SearchNationalCode, Mode=TwoWay}" PlaceholderText="10 digits..."/>
+                <TextBox Grid.Column="0" Header="Name" Text="{x:Bind ViewModel.SearchName, Mode=TwoWay}" PlaceholderText="Search by name..."/>
+                <TextBox Grid.Column="1" Header="Phone" Text="{x:Bind ViewModel.SearchPhone, Mode=TwoWay}" PlaceholderText="e.g. 0912..."/>
+                <TextBox Grid.Column="2" Header="National Code" Text="{x:Bind ViewModel.SearchNationalCode, Mode=TwoWay}" PlaceholderText="10 digits..."/>
 
-                <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Grid.Column="3" Command="{x:Bind ViewModel.LoadCustomersCommand}" Style="{ThemeResource AccentButtonStyle}" VerticalAlignment="Bottom" Width="100">
+                <Button Grid.Column="3" Command="{x:Bind ViewModel.LoadCustomersCommand}" Style="{ThemeResource AccentButtonStyle}" VerticalAlignment="Bottom" Width="100">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="&#xE721;" FontSize="14"/>
-                        <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="Search" Margin="0,0,0,2"/>
+                        <TextBlock Text="Search" Margin="0,0,0,2"/>
                     </StackPanel>
                 </Button>
             </Grid>
@@ -48,7 +47,7 @@
 
         <!-- 2. DataGrid -->
         <Border Grid.Row="1" BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" BorderThickness="1" CornerRadius="8" Padding="16">
-            <controls:DataGrid FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" ItemsSource="{x:Bind ViewModel.Customers, Mode=OneWay}" 
+            <controls:DataGrid ItemsSource="{x:Bind ViewModel.Customers, Mode=OneWay}" 
                                SelectedItem="{x:Bind ViewModel.SelectedCustomer, Mode=TwoWay}"
                                AutoGenerateColumns="False" 
                                IsReadOnly="True" 
@@ -70,15 +69,15 @@
             <Grid>
                 <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
 
-                    <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Refresh" Command="{x:Bind ViewModel.LoadCustomersCommand}" Width="100"/>
+                    <Button Content="Refresh" Command="{x:Bind ViewModel.LoadCustomersCommand}" Width="100"/>
 
-                    <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Purchase history" Command="{x:Bind ViewModel.ShowHistoryCommand}" IsEnabled="{x:Bind ViewModel.IsCustomerSelected, Mode=OneWay}"/>
-                    <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="Edit Customer" 
+                    <Button Content="Purchase history" Command="{x:Bind ViewModel.ShowHistoryCommand}" IsEnabled="{x:Bind ViewModel.IsCustomerSelected, Mode=OneWay}"/>
+                    <Button Content="Edit Customer" 
                             Command="{x:Bind ViewModel.ShowEditDialogCommand}" 
                             IsEnabled="{x:Bind ViewModel.IsCustomerSelected, Mode=OneWay}"
                             Width="130"/>
 
-                    <Button FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Content="New Customer" 
+                    <Button Content="New Customer" 
                             Command="{x:Bind ViewModel.ShowAddDialogCommand}" 
                             Style="{ThemeResource AccentButtonStyle}"
                             Width="140">
@@ -86,7 +85,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <FontIcon Glyph="&#xE710;" FontSize="14"/>
-                                    <TextBlock FontSize="{Binding FontSize, Source={StaticResource Appearance}}" FontFamily="{Binding FontFamily, Source={StaticResource Appearance}}" Text="New Customer"/>
+                                    <TextBlock Text="New Customer"/>
                                 </StackPanel>
                             </DataTemplate>
                         </Button.ContentTemplate>

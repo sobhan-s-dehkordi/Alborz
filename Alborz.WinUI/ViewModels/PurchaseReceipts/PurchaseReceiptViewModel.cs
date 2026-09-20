@@ -154,7 +154,7 @@ public partial class PurchaseReceiptViewModel : Alborz.WinUI.ViewModels.Common.V
         {
             SupplierSearchResults.Add(item);
         }
-    
+
         }
         catch (System.Exception ex) { ReportError(ex); }
     }
@@ -181,7 +181,7 @@ public partial class PurchaseReceiptViewModel : Alborz.WinUI.ViewModels.Common.V
         {
             ProductSearchResults.Add(item);
         }
-    
+
         }
         catch (System.Exception ex) { ReportError(ex); }
     }
@@ -209,11 +209,28 @@ public partial class PurchaseReceiptViewModel : Alborz.WinUI.ViewModels.Common.V
             return;
         }
         if (_selectedProductFromSearch == null) { ErrorMessage = "Select a product."; return; }
-        if (ReceiptItems.Any(i => i.ProductId == _selectedProductFromSearch.Id)) { ErrorMessage = "This product is already in the document. Edit its existing row."; return; }
+
 
         if (InputQuantity <= 0) { ErrorMessage = "Quantity must be positive."; return; }
         if (!decimal.TryParse(InputPrice.Replace(",", ""), out decimal price) || price < 0 || price > 9999999999999999.99m / InputQuantity) { ErrorMessage = "Enter a valid non-negative price."; return; }
 
+        var existing = ReceiptItems.FirstOrDefault(i => i.ProductId == _selectedProductFromSearch.Id);
+        if (existing != null)
+        {
+            try
+            {
+                var line = Alborz.Application.Common.DocumentLineEditor.Increase(existing.ProductId,
+                    existing.Quantity, existing.UnitPrice, existing.DiscountAmount, InputQuantity);
+                existing.Quantity = line.Quantity;
+                existing.DiscountAmount = line.DiscountAmount;
+                _selectedProductFromSearch = null;
+                SearchProductText = string.Empty;
+                InputQuantity = 1;
+                InputDiscountPercentage = "0";
+            }
+            catch (Exception ex) { ReportError(ex); }
+            return;
+        }
         decimal totalLinePrice = price * InputQuantity;
         decimal calculatedDiscountAmount = decimal.Round(totalLinePrice * discountPercent / 100m, 2);
 
@@ -252,6 +269,14 @@ public partial class PurchaseReceiptViewModel : Alborz.WinUI.ViewModels.Common.V
         }
     }
 
+    public void EditItem(ReceiptItemUIModel item, int quantity, decimal price, decimal discount)
+    {
+        if (!ReceiptItems.Contains(item)) throw new InvalidOperationException("This row no longer exists.");
+        var line = Alborz.Application.Common.DocumentLineEditor.Validate(item.ProductId, quantity, price, discount);
+        item.Quantity = line.Quantity;
+        item.UnitPrice = line.UnitPrice;
+        item.DiscountAmount = line.DiscountAmount;
+    }
     [RelayCommand]
     public async Task SaveReceiptAsync()
     {
@@ -314,7 +339,7 @@ public partial class PurchaseReceiptViewModel : Alborz.WinUI.ViewModels.Common.V
             AdditionalCharges = "0";
             Remarks = string.Empty;
         }
-    
+
         }
         catch (System.Exception ex) { ReportError(ex); }
     }
@@ -377,16 +402,10 @@ public partial class PurchaseReceiptViewModel : Alborz.WinUI.ViewModels.Common.V
         {
             SubmitButtonText = "Submit Purchase Receipt";
         }
-    
+
         }
         catch (System.Exception ex) { ReportError(ex); }
     }
 
     #endregion
 }
-
-
-
-
-
-

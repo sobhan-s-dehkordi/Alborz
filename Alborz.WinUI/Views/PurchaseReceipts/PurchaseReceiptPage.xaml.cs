@@ -75,6 +75,14 @@ public sealed partial class PurchaseReceiptPage : Page
         }
     }
 
+    private async void EditItemButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (sender is not Button { DataContext: ReceiptItemUIModel item }) return;
+        var dialog = new Alborz.WinUI.Views.Common.DocumentLineDialog(item.ProductId, item.ProductName,
+            item.Quantity, item.UnitPrice, item.DiscountAmount) { XamlRoot = XamlRoot };
+        if (await App.ShowDialogAsync(dialog) == ContentDialogResult.Primary && dialog.Result is { } line)
+            ViewModel.EditItem(item, line.Quantity, line.UnitPrice, line.DiscountAmount);
+    }
     private void RemoveItemButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         if (sender is Button btn && btn.DataContext is ReceiptItemUIModel item)
